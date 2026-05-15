@@ -194,5 +194,15 @@
   "Please connect to the BSC network": "Please connect to the BSC network",
   "Error fetching USDT balance": "Error fetching USDT balance",
   "Error fetching token balance": "Error fetching token balance",
-  "Signature failed": "Signature failed"
+  "Signature failed": "Signature failed",
+  "Announcements": "Announcements",
+  "Stay updated with the latest news and system updates": "Stay updated with the latest news and system updates",
+  "System Notices": "System Notices",
+  "System Upgrade Announcement": "System Upgrade Announcement",
+  "Queue Adjustment Notice": "Queue Adjustment Notice",
+  "Upgrade Timeline": "Upgrade Timeline",
+  "Security Assurance": "Security Assurance",
+  "Participate in Financial Management": "Participate in Staking",
+  "Financial Management": "Staking",
+  "Start Financial Management": "Start Staking"
 }

@@ -215,5 +215,15 @@
   "Please connect to the BSC network": "請連接到BSC網絡",
   "Error fetching USDT balance": "獲取USDT餘額失敗",
   "Error fetching token balance": "獲取代幣餘額失敗",
-  "Signature failed": "簽名失敗"
+  "Signature failed": "簽名失敗",
+  "Announcements": "公告中心",
+  "Stay updated with the latest news and system updates": "及時了解最新消息和系統更新",
+  "System Notices": "系統公告",
+  "System Upgrade Announcement": "系統升級公告",
+  "Queue Adjustment Notice": "輪候調整通知",
+  "Upgrade Timeline": "升級時間表",
+  "Security Assurance": "安全保障",
+  "Participate in Financial Management": "參與理財",
+  "Financial Management": "理財",
+  "Start Financial Management": "開始理財"
 }

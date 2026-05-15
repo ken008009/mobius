@@ -6,6 +6,7 @@ import { X } from 'lucide-react'
 import './styles/community.less'
 
 const JoinTeamForm = (props) => {
+  const { t } = props
   const [address, setAddress] = useState('')
 
   return (
@@ -70,7 +71,7 @@ const Community = (props) => {
     let dialog = Dialog.show({
       header: null,
       title: null,
-      content: <JoinTeamForm onChange={async (value) => {
+      content: <JoinTeamForm t={t} onChange={async (value) => {
         if (value) {
           try {
             const toast = Toast.show({
@@ -112,20 +113,28 @@ const Community = (props) => {
         <div className="community-info">
           {
             isRegistered && (
-              <>
-                <p>{t('My Top')}</p>
-                <h3>{props.formatAddress(parent)}</h3>
-              </>
+              <div className="community-info-item">
+                <h3>{t('My Top')}</h3>
+                <p>{props.formatAddress(parent)}</p>
+              </div>
             )
           }
-          <p>{t('Team Performance')}</p>
-          <h3>{perf} US$</h3>
-          <p>{t('My Level')}</p>
-          <h3>{level}</h3>
-          <p>{t('My Performance')}</p>
-          <h3>{teamCount} US$</h3>
-          <p>{t('My Stake Amount')}</p>
-          <h3>{baseStakedAmount} US$</h3>
+          <div className="community-info-item">
+            <h3>{t('Team Performance')}</h3>
+            <p>{perf} US$</p>
+          </div>
+          <div className="community-info-item">
+            <h3>{t('My Level')}</h3>
+            <p>{level}</p>
+          </div>
+          <div className="community-info-item">
+            <h3>{t('My Performance')}</h3>
+            <p>{teamCount} US$</p>
+          </div>
+          <div className="community-info-item">
+            <h3>{t('My Stake Amount')}</h3>
+            <p>{baseStakedAmount} US$</p>
+          </div>
         </div>
         {/* <div className="community-data">
           <div className="community-data-item">

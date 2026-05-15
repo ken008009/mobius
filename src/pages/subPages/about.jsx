@@ -41,7 +41,7 @@ const About = (props) => {
           <a href="#" className="go-staking-btn" onClick={e => {
             e.preventDefault()
             props.navigate('/staking')
-          }}>{t('Participate in Liquidity Staking')}</a>
+          }}>{t('Participate in Financial Management')}</a>
         </div>
         <div className="about-list">
           <div className="about-list-item">
@@ -49,23 +49,23 @@ const About = (props) => {
             <p>{t('Reference price for price crash prevention')}</p>
             <p>${priceA}</p>
           </div>
-          <div className="about-list-item">
+          {/* <div className="about-list-item">
             <AboutListIcon2 />
             <p>{t('USDT Reserves')}</p>
             <p>${reserveUCurrent}</p>
-          </div>
+          </div> */}
           <div className="about-list-item">
             <AboutListIcon3 />
             <p>{t('Total number of black hole tokens')}</p>
             <p>{balance}</p>
           </div>
-          <div className="about-list-item">
+          {/* <div className="about-list-item">
             <AboutListIcon4 />
             <p>{t('Team Staked Total')}</p>
             <p>{perf}</p>
-          </div>
+          </div> */}
         </div>
-        <div className="about-info">
+        {/* <div className="about-info">
           <div className="about-info-title">{t('About the MS')}<br />{t('Protocol')}</div>
           <div className="about-info-content">{t('The MS Protocol')}, {t('based on the theories of 19th-century German mathematician August Ferdinand Möbius')}, {t('leverages the decentralized advantages of blockchain technology')}. {t('It pioneered seven protocols for controlling entry and exit')}, {t('preventing price crashes')}, {t('circuit breakers')}, {t('preventing large investors from exploiting the system')}, {t('preventing insider trading')}, {t('and preventing front-running')}. {t('These protocols avoid human intervention and emotional panic')}, {t('binding liquidity')}, {t('security')}, {t('and the interests of card-based blockchain games together to ensure safety while creating a super profit flywheel')}.</div>
         </div>
@@ -112,7 +112,7 @@ const About = (props) => {
             <li><a href="#">ETC</a></li>
             <li><a href="#">Dubai Royal Fund</a></li>
           </ul>
-        </div>
+        </div> */}
         <div className="footer-logo"></div>
       </div>
     </>

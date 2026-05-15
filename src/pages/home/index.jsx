@@ -80,7 +80,7 @@ const Home = (props) => {
           <h3>{t('GameFi')} + {t('DeFi Ecosystem')}</h3>
           <p>{t('Mobius Strip is an open blockchain ecosystem combining an on-chain card game with decentralized finance. Players, investors, and nodes interact in one continuous economic loop powered by the $MS token')}.</p>
         </div>
-        <div className="page-list list-1">
+        {/* <div className="page-list list-1">
           <div className="subtitle-1">{t('Security Protocols')}</div>
           <ul>
             <li>
@@ -152,7 +152,7 @@ const Home = (props) => {
             <p>{t('LP Transparency')}</p>
             <p>{t('Node contributions strengthen the LP pool and support the overall stability of the Mobius Strip economy')}.</p>
           </li>
-        </ul>
+        </ul> */}
         <div className="footer-logo"></div>
       </div>
     </>

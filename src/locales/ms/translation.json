@@ -215,5 +215,15 @@
   "Please connect to the BSC network": "Sila sambung ke rangkaian BSC",
   "Error fetching USDT balance": "Ralat mengambil baki USDT",
   "Error fetching token balance": "Ralat mengambil baki token",
-  "Signature failed": "Tandatangan gagal"
+  "Signature failed": "Tandatangan gagal",
+  "Announcements": "Pengumuman",
+  "Stay updated with the latest news and system updates": "Kekal dikemas kini dengan berita terkini dan kemas kini sistem",
+  "System Notices": "Notis Sistem",
+  "System Upgrade Announcement": "Pengumuman Peningkatan Sistem",
+  "Queue Adjustment Notice": "Notis Penyesuaian Barisan",
+  "Upgrade Timeline": "Jadual Peningkatan",
+  "Security Assurance": "Jaminan Keselamatan",
+  "Participate in Financial Management": "Sertai Pengurusan Kewangan",
+  "Financial Management": "Pengurusan Kewangan",
+  "Start Financial Management": "Mulakan Pengurusan Kewangan"
 }

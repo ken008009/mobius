@@ -215,5 +215,15 @@
   "Please connect to the BSC network": "BSC 네트워크에 연결하세요",
   "Error fetching USDT balance": "USDT 잔액 가져오기 오류",
   "Error fetching token balance": "토큰 잔액 가져오기 오류",
-  "Signature failed": "서명 실패"
+  "Signature failed": "서명 실패",
+  "Announcements": "공지사항",
+  "Stay updated with the latest news and system updates": "최신 뉴스 및 시스템 업데이트 확인",
+  "System Notices": "시스템 공지",
+  "System Upgrade Announcement": "시스템 업그레이드 공지",
+  "Queue Adjustment Notice": "대기열 조정 공지",
+  "Upgrade Timeline": "업그레이드 일정",
+  "Security Assurance": "보안 보장",
+  "Participate in Financial Management": "재무 관리 참여",
+  "Financial Management": "재무 관리",
+  "Start Financial Management": "재무 관리 시작"
 }

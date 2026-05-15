@@ -43,9 +43,9 @@ export class ETH {
                     chainId: '0x38',
                     chainName: 'BNB Smart Chain',
                     nativeCurrency: {
-                    name: 'BNB',
-                    symbol: 'BNB',
-                    decimals: 18,
+                        name: 'BNB',
+                        symbol: 'BNB',
+                        decimals: 18,
                     },
                     rpcUrls: ['https://bsc-dataseed.binance.org/'],
                     blockExplorerUrls: ['https://bscscan.com'],

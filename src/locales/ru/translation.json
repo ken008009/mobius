@@ -215,5 +215,15 @@
   "Please connect to the BSC network": "Пожалуйста, подключитесь к сети BSC",
   "Error fetching USDT balance": "Ошибка получения баланса USDT",
   "Error fetching token balance": "Ошибка получения баланса токенов",
-  "Signature failed": "Подпись не удалась"
+  "Signature failed": "Подпись не удалась",
+  "Announcements": "Объявления",
+  "Stay updated with the latest news and system updates": "Будьте в курсе последних новостей и обновлений системы",
+  "System Notices": "Системные уведомления",
+  "System Upgrade Announcement": "Объявление об обновлении системы",
+  "Queue Adjustment Notice": "Уведомление о корректировке очереди",
+  "Upgrade Timeline": "График обновления",
+  "Security Assurance": "Гарантия безопасности",
+  "Participate in Financial Management": "Участвовать в финансовом управлении",
+  "Financial Management": "Финансовое управление",
+  "Start Financial Management": "Начать финансовое управление"
 }

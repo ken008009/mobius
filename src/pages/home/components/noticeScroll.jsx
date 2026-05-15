@@ -1,14 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useMemo } from 'react'
+import { getNoticeTexts } from '@config/notices'
 
 const NoticeScroll = (props) => {
-  const { t } = props
+  const { t, navigate } = props
 
-  const notices = [
-    t('Considering the queue cycle of the MS financial project across multiple markets and its impact on team income and motivation, it has been decided to comprehensively upgrade the MS system. The upgraded MS 2.0 system will fully resolve the impact of queue cycles on earnings, while team rewards will also be comprehensively optimized.'),
-    t('For investors who have already joined the queue or have already entered the financial program under the original system, the queue control coefficient will be adjusted from the date of this announcement. Interest for users who have already entered the earning stage will continue to be calculated normally, and additional compensation will be provided after the upgrade.'),
-    t('The upgrade is expected to be fully completed within two to three weeks from the date of this announcement. During the upgrade period, all financial interest earnings will continue to be calculated normally. Partners who are still in the queue on the upgrade date may simply set up a fund migration.'),
-    t('During this system upgrade, there will be no risk of asset loss for any investors or team funds. Please do not worry.')
-  ]
+  const notices = useMemo(() => getNoticeTexts(t), [t])
 
   const [currentIndex, setCurrentIndex] = useState(0)
   // 存储每一项真实高度
@@ -74,6 +70,14 @@ const NoticeScroll = (props) => {
             ))}
           </div>
         </div>
+        {navigate && (
+          <div className="notice-title notice-more" onClick={() => navigate('/notices')}>
+            <svg width="16px" height="16px" viewBox="0 0 24 24" strokeWidth="1.5" fill="none" xmlns="http://www.w3.org/2000/svg" color="#FFF">
+              <path d="M19 12L12 5M19 12L12 19" stroke="#FFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+            </svg>
+          </div>
+        )}
+
       </div>
 
       <style>{`
@@ -90,6 +94,13 @@ const NoticeScroll = (props) => {
         .notice-title {
           margin-right: 8px;
           flex-shrink: 0;
+          &.notice-more {
+            cursor: pointer;
+            transition: opacity 0.2s;
+            &:hover {
+              opacity: 0.7;
+            }
+          }
         }
         .notice {
           flex: 1;

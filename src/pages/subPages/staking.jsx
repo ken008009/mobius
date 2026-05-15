@@ -11,6 +11,7 @@ const USDT = new Contract(import.meta.env.VITE_USDT, "ERC20");
 const BUY = new Contract(import.meta.env.VITE_ZYSQ, "BUY");
 
 const AddressForm = (props) => {
+  const { t } = props
   const [parentAddress, setParentAddress] = useState('')
 
   return (
@@ -110,12 +111,13 @@ const Staking = (props) => {
 
   const handleRegistered = async (status) => {
     if (!amount) return Toast.show(t('Please enter an amount'))
-    if (new Big(amount).lt('200') || new Big(amount).gt('1000')) return Toast.show(`${t('Staking amount per order')}200～1000USDT`)
+    if (Number(amount) <= 0) return Toast.show(t('Please enter a valid amount'))
+    
     if (!isRegistered) {
       let dialog = Dialog.show({
         header: null,
         title: null,
-        content: <AddressForm onChange={value => {
+        content: <AddressForm t={t} onChange={value => {
           dialog.close()
           handleStaking(status, value)
         }} />,
@@ -198,17 +200,17 @@ const Staking = (props) => {
           </div>
         </div>
         <div className="staking-banner">
-          <h3>{t('Staking')}</h3>
+          <h3>{t('Financial Management')}</h3>
           <p>{t('Mobius Strip')}, {t('a blockchain gaming ecosystem based on the 19th-century German mathematician August Ferdinand Möbius')}, {t('features a fully integrated')}, {t('infinitely circulating financial protocol')}.</p>
         </div>
-        <div className="staking-tab">
+        {/* <div className="staking-tab">
           <div className={classnames('staking-tab-item', {active: active === '0'})} onClick={() => setActive('0')}>
             <h3><ClockCircleOutlined />30 {t('Days')}</h3>
             <p>
               <span>{t('Daily Rate')}</span>
               <span>1.2%</span>
             </p>
-            <p>
+            <p> 
               <span>{t('Total Return')}</span>
               <span>143%</span>
             </p>
@@ -224,23 +226,34 @@ const Staking = (props) => {
               <span>1022%</span>
             </p>
           </div>
-        </div>
+        </div> */}
         <div className="staking-amount">
-          <div className="staking-amount-hint"><InfoCircleOutlined />{t('Staking amount per order')}200～1000USDT</div>
+          {/* <div className="staking-amount-hint"><InfoCircleOutlined />{t('Staking amount per order')}200～1000USDT</div> */}
           <div className="staking-amount-title">{t('Staking Amount')}（USDT）</div>
           <div className="staking-amount-form" style={{marginBottom: 20}}>
             <input type="number" value={amount} onChange={e => {
-              const maxAmount = new Big(maxStakeAmountNow).toString()
-
-              if (Number(e.target.value) > Number(maxAmount)) {
-                return setAmount(maxAmount)
+              const value = e.target.value
+              
+              if (value !== '' && Number(value) < 0) {
+                return
               }
 
-              setAmount(e.target.value)
+              try {
+                const maxAmount = new Big(maxStakeAmountNow || 0).toString()
+
+                if (value && Number(value) > Number(maxAmount)) {
+                  return setAmount(maxAmount)
+                }
+
+                setAmount(value)
+              } catch (error) {
+                console.error('Invalid maxStakeAmountNow:', maxStakeAmountNow)
+                setAmount(value)
+              }
             }} placeholder={t('Enter staking amount')} className="amount-input" />
-            <button className="amount-max-btn" onClick={() => handleSelectMax()}>{t('MAX')}</button>
+            {/* <button className="amount-max-btn" onClick={() => handleSelectMax()}>{t('MAX')}</button> */}
           </div>
-          <div className="staking-amount-title">{t('Purchase Quantity')}</div>
+          {/* <div className="staking-amount-title">{t('Purchase Quantity')}</div>
           <div className="staking-amount-form">
             <input type="number" value={count} onChange={e => {
               setCount(e.target.value)
@@ -248,9 +261,9 @@ const Staking = (props) => {
               if (e.target.value < 1) return setCount(1)
             }} placeholder={t('Enter Purchase Quantity')} className="amount-input" />
           </div>
-          <div className="staking-hint">{t('maturityAmount')}：{calcInterest(count, amount, active === '0' ? 1.012 : 1.013, active === '0' ? 30 : 180).toFixed(3)} USDT</div>
+          <div className="staking-hint">{t('maturityAmount')}：{calcInterest(count, amount, active === '0' ? 1.012 : 1.013, active === '0' ? 30 : 180).toFixed(3)} USDT</div> */}
         </div>
-        <Button loading={loading} className="staking-btn" onClick={() => handleRegistered()}>{t('Start Liquidity Staking')}</Button>
+        <Button loading={loading} className="staking-btn" onClick={() => handleRegistered()}>{t('Start Financial Management')}</Button>
         <div className="staking-log">
           <div className="staking-log-title">{t('Waiting list')}</div>
           <div className="staking-log-list">

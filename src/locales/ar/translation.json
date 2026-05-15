@@ -215,5 +215,15 @@
   "Please connect to the BSC network": "الرجاء الاتصال بشبكة BSC",
   "Error fetching USDT balance": "خطأ في جلب رصيد USDT",
   "Error fetching token balance": "خطأ في جلب رصيد الرمز",
-  "Signature failed": "فشل التوقيع"
+  "Signature failed": "فشل التوقيع",
+  "Announcements": "الإعلانات",
+  "Stay updated with the latest news and system updates": "ابق على اطلاع بأحدث الأخبار وتحديثات النظام",
+  "System Notices": "إشعارات النظام",
+  "System Upgrade Announcement": "إعلان ترقية النظام",
+  "Queue Adjustment Notice": "إشعار تعديل قائمة الانتظار",
+  "Upgrade Timeline": "الجدول الزمني للترقية",
+  "Security Assurance": "ضمان الأمان",
+  "Participate in Financial Management": "المشاركة في الإدارة المالية",
+  "Financial Management": "الإدارة المالية",
+  "Start Financial Management": "بدء الإدارة المالية"
 }

@@ -214,6 +214,16 @@
   "Please switch to the BNB network": "请切换到BNB网络",
   "Please connect to the BSC network": "请连接到BSC网络",
   "Error fetching USDT balance": "获取USDT余额失败",
-  "Error fetching token balance": "获取代币余额失败",
-  "Signature failed": "签名失败"
+  "Error fetching token balance": "获取代币余额出错",
+  "Signature failed": "签名失败",
+  "Announcements": "公告中心",
+  "Stay updated with the latest news and system updates": "及时了解最新消息和系统更新",
+  "System Notices": "系统公告",
+  "System Upgrade Announcement": "系统升级公告",
+  "Queue Adjustment Notice": "排队调整通知",
+  "Upgrade Timeline": "升级时间表",
+  "Security Assurance": "安全保障",
+  "Participate in Financial Management": "参与理财",
+  "Financial Management": "理财",
+  "Start Financial Management": "开始理财"
 }

@@ -215,5 +215,15 @@
   "Please connect to the BSC network": "BSCネットワークに接続してください",
   "Error fetching USDT balance": "USDT残高の取得エラー",
   "Error fetching token balance": "トークン残高の取得エラー",
-  "Signature failed": "署名に失敗しました"
+  "Signature failed": "署名に失敗しました",
+  "Announcements": "お知らせ",
+  "Stay updated with the latest news and system updates": "最新のニュースとシステムアップデートをチェック",
+  "System Notices": "システム通知",
+  "System Upgrade Announcement": "システムアップグレードのお知らせ",
+  "Queue Adjustment Notice": "キュー調整のお知らせ",
+  "Upgrade Timeline": "アップグレードスケジュール",
+  "Security Assurance": "セキュリティ保証",
+  "Participate in Financial Management": "資産運用に参加",
+  "Financial Management": "資産運用",
+  "Start Financial Management": "資産運用を開始"
 }

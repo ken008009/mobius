@@ -215,5 +215,15 @@
   "Please connect to the BSC network": "โปรดเชื่อมต่อกับเครือข่าย BSC",
   "Error fetching USDT balance": "ข้อผิดพลาดในการรับยอดเงิน USDT",
   "Error fetching token balance": "ข้อผิดพลาดในการรับยอดโทเค็น",
-  "Signature failed": "เซ็นชื่อล้มเหลว"
+  "Signature failed": "การลงนามล้มเหลว",
+  "Announcements": "ประกาศ",
+  "Stay updated with the latest news and system updates": "ติดตามข่าวสารและการอัปเดตระบบล่าสุด",
+  "System Notices": "ประกาศระบบ",
+  "System Upgrade Announcement": "ประกาศอัปเกรดระบบ",
+  "Queue Adjustment Notice": "ประกาศปรับคิว",
+  "Upgrade Timeline": "กำหนดการอัปเกรด",
+  "Security Assurance": "การรับประกันความปลอดภัย",
+  "Participate in Financial Management": "เข้าร่วมการจัดการทางการเงิน",
+  "Financial Management": "การจัดการทางการเงิน",
+  "Start Financial Management": "เริ่มการจัดการทางการเงิน"
 }

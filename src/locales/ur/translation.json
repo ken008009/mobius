@@ -215,5 +215,15 @@
   "Please connect to the BSC network": "براہ کرم BSC نیٹ ورک سے منسلک ہوں",
   "Error fetching USDT balance": "USDT بیلنس حاصل کرنے میں خرابی",
   "Error fetching token balance": "ٹوکن بیلنس حاصل کرنے میں خرابی",
-  "Signature failed": " دستخط ناکام"
+  "Signature failed": "دستخط ناکام",
+  "Announcements": "اعلانات",
+  "Stay updated with the latest news and system updates": "تازہ ترین خبروں اور سسٹم اپ ڈیٹس سے باخبر رہیں",
+  "System Notices": "سسٹم نوٹس",
+  "System Upgrade Announcement": "سسٹم اپ گریڈ کا اعلان",
+  "Queue Adjustment Notice": "قطار ایڈجسٹمنٹ نوٹس",
+  "Upgrade Timeline": "اپ گریڈ ٹائم لائن",
+  "Security Assurance": "سیکیورٹی یقین دہانی",
+  "Participate in Financial Management": "مالیاتی انتظام میں شرکت کریں",
+  "Financial Management": "مالیاتی انتظام",
+  "Start Financial Management": "مالیاتی انتظام شروع کریں"
 }
