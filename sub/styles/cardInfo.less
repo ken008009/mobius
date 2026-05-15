@@ -1,0 +1,28 @@
+.card-info-page {
+  margin-top: 20px;
+  background: #FFF;
+  padding: 10px 0;
+  .card-info-list {
+    display: flex;
+    flex-direction: column;
+    .card-info-item {
+      height: 45px;
+      display: flex;
+      align-items: center;
+      padding: 0 30px;
+      font-size: 14px;
+      &:not(:last-child) {
+        border-bottom: 1px solid #FAFAFA;
+      }
+      label {
+        width: 86px;
+        flex-shrink: 0;
+        color: #646566;
+      }
+      p {
+        flex: 1 0 0;
+        color: #333;
+      }
+    }
+  }
+}

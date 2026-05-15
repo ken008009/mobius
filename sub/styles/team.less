@@ -1,0 +1,63 @@
+.team-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  .team-info {
+    background: #FFF;
+    display: flex;
+    padding: 20px;
+    .team-info-item {
+      flex: 1 0 0;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      p {
+        &:nth-child(1) {
+          font-size: 12px;
+        }
+        &:nth-child(2) {
+          font-size: 15px;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+  .team-list {
+    background: #FFF;
+    padding: 20px;
+    .team-list-title {
+      font-weight: 500;
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
+  }
+  .earnings-list {
+    display: flex;
+    padding: 0 15px;
+    flex-direction: column;
+    gap: 10px;
+    .earnings-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px dashed #EEE;
+      padding-bottom: 10px;
+      .earnings-item-left {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        p {
+          font-size: 12px;
+          &:first-child {
+            font-size: 14px;
+          }
+        }
+      }
+      .earnings-item-amount {
+        font-size: 15px;
+        font-weight: 500;
+      }
+    }
+  }
+}

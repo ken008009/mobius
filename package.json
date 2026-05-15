@@ -1,0 +1,53 @@
+{
+  "name": "my-react-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "i18next": "npx i18next-parser --config .i18next-parserrc 'src/**/*.{js,jsx,ts,tsx}'"
+  },
+  "dependencies": {
+    "@metamask/detect-provider": "^2.0.0",
+    "antd-mobile": "^5.38.1",
+    "axios": "^1.7.9",
+    "classnames": "^2.5.1",
+    "copy-to-clipboard": "^3.3.3",
+    "dayjs": "^1.11.13",
+    "emoji-flags": "^1.3.0",
+    "ethers": "^5.7.2",
+    "i18n-iso-countries": "^7.14.0",
+    "i18next": "^24.2.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-i18next": "^15.4.1",
+    "react-icons": "^5.5.0",
+    "react-router-dom": "^7.2.0",
+    "react-vant": "3.3.5"
+  },
+  "devDependencies": {
+    "@ant-design/icons": "^6.1.0",
+    "@eslint/js": "^9.19.0",
+    "@react-vant/icons": "^0.1.0",
+    "@types/node": "^22.13.4",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "big.js": "^7.0.1",
+    "eslint": "^9.19.0",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.18",
+    "globals": "^15.14.0",
+    "i18next-parser": "^9.3.0",
+    "less": "^4.2.2",
+    "less-loader": "^12.2.0",
+    "lucide-react": "^0.577.0",
+    "react-treebeard": "^3.2.4",
+    "vite": "^6.1.0",
+    "vite-plugin-svgr": "^4.5.0"
+  }
+}

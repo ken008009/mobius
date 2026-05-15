@@ -1,0 +1,361 @@
+:root {
+  --bg: #000;
+  --color-primary: #1E90FF;
+  --font-color: #CCC;
+  --rv-nav-bar-background-color: none !important;
+  --rv-line-height-lg: none !important;
+  --rv-gray-3: none !important;
+  --rv-nav-bar-icon-color: #FFFFFF !important;
+  --rv-nav-bar-title-text-color: #FFF !important;
+  --rv-tab-active-text-color: #0463B7 !important;
+  --rv-tabs-bottom-bar-color: #0463B7 !important;
+  --rv-action-sheet-item-font-size: 14px !important;
+  --rv-tabs-bottom-bar-color: #0463B7 !important;
+}
+:root:root {
+  --adm-color-background: #13131A !important;
+}
+
+ @font-face{
+  font-family:"Proxima Nova:Extrabold";
+  font-style:normal;
+  src:url("@assets/fonts/d4b4f1a0ebe406ad40dabd18cfed0e7fc6f9c437.ttf");
+  font-display:block;
+}
+@font-face{
+  font-family:"Proxima Nova:Regular";
+  font-style:normal;
+  src:url("@assets/fonts/de8feaa7563eeddb2882c645054d79077ace66e7.ttf");
+  font-display:block;
+}
+@font-face{
+  font-family:"Proxima Nova:Bold";
+  font-style:normal;
+  src:url("@assets/fonts/2acd4dfea92d30ba4082d5d83fd4b5a0b9120894.ttf");
+  font-display:block
+}
+
+html,
+body,
+a,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+b,
+i,
+em,
+s,
+u,
+dl,
+dt,
+p,
+dd,
+ul,
+ol,
+li,
+strong,
+span,
+table,
+th,
+tr,
+td,
+img,
+div,
+form,
+fieldset,
+legend,
+input,
+button,
+select,
+option,
+textarea,
+label,
+iframe {
+  margin: 0;
+  padding: 0;
+  box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  -webkit-box-sizing:border-box;
+  font-family: 'Proxima Nova:Regular', -apple-system, BlinkMacSystemFont, 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial,
+    sans-serif, 'Apple Color Emoji';
+}
+
+a {
+  text-decoration: none;
+  color: #FFF;
+}
+
+ol,
+ul,
+li {
+  list-style: none;
+}
+
+html,
+body {
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  background: #000;
+  &:after{
+    display:block;
+    content:"clear";
+    height:0;
+    clear:both;
+    overflow:hidden;
+    visibility:hidden;
+  }
+}
+body {
+  margin: 0;
+  font-size: 13px/21px;
+  font-family: 'Proxima Nova:Regular', -apple-system, BlinkMacSystemFont, 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial,
+    sans-serif, 'Apple Color Emoji' !important;
+  font-variant: tabular-nums;
+  line-height: 1.5;
+  background: var(--bg);
+  color: var(--font-color);
+  -webkit-font-feature-settings: 'tnum';
+  font-feature-settings: 'tnum';
+}
+textarea {
+  resize: none;
+}
+input,
+button,
+textarea {
+  outline: none;
+}
+button {
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+}
+img {
+  max-width: 100%;
+  height: auto;
+  width: auto\9;
+  -ms-interpolation-mode: bicubic;
+}
+
+input,
+input[type='submit'],
+[type='reset'],
+[type='button'] {
+  color: #22242E;
+  -webkit-appearance: none;
+  resize: none;
+}
+
+.clear_fix::after {
+  content: ' ';
+  display: block;
+  visibility: hidden;
+  height: 0;
+  clear: both;
+}
+
+/* 设置背景文字颜色 */
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: #cbd3de;
+}
+#root {
+  height: 100%;
+  &:after{
+    display:block;
+    content:"clear";
+    height:0;
+    clear:both;
+    overflow:hidden;
+    visibility:hidden;
+  }
+  &>div {
+    padding-top: 56px;
+  }
+}
+
+.assets-box {
+  // padding: 0 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  .assets-title {
+    font-size: 16px;
+    line-height: 30px;
+    font-weight: bold;
+  }
+  .assets-list {
+    background: #FFF;
+    border-radius: 6px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    .assets-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .assets-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        .assets-icon {
+          width: 40px;
+          height: 40px;
+          background: #EEE;
+          border-radius: 50%;
+        }
+        .usdt {
+          background: url('@images/usdt-icon.png') no-repeat;
+          background-size: cover;
+        }
+        .usd {
+          background: url('@images/usd-icon.png') no-repeat;
+          background-size: cover;
+        }
+        .usdc {
+          background: url('@images/usdc-icon.png') no-repeat;
+          background-size: cover;
+        }
+        .busd {
+          background: url('@images/busd-icon.png') no-repeat;
+          background-size: cover;
+        }
+        .omnispere {
+          background: url('@images/omnispere-icon.png') no-repeat;
+          background-size: cover;
+        }
+        .assets-name {
+          font-size: 14px;
+          font-weight: 600;
+        }
+      }
+      .assets-amount {
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+
+.card {
+  height: 200px;
+  border-radius: 12px;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  color: #FFF;
+  gap: 20px;
+  justify-content: center;
+  padding: 0 20px;
+  position: relative;
+  overflow: hidden;
+  .open-card-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: none;
+    border-radius: 40px;
+    color: #FFF;
+    font-weight: 500;
+    font-size: 15px;
+  }
+  p {
+    span {
+      font-size: 20px;
+      font-weight: bold;
+    }
+  }
+}
+.home-card {
+  background: url('@images/card-bg.png') no-repeat center;
+  background-size: cover;
+}
+.wallet-card {
+  background: url('@images/card-bg-2.png') no-repeat center;
+  background-size: cover;
+}
+.bank-card {
+  background: url('@images/card-bg-3.png') no-repeat center;
+  background-size: cover;
+}
+.empty {
+  width: 317px;
+  height: 189px;
+  background: url('@images/empty.webp') no-repeat;
+  background-size: 317px 189px;
+  margin: 40px auto;
+}
+
+.user-tree {
+  padding: 0 !important;
+}
+.no-footer-dialog {
+  .adm-dialog-footer {
+    display: none;
+  }
+}
+
+.address-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  .address-title {
+    font-size: 12px;
+    color: #FFF;
+    margin-bottom: 5px;
+  }
+  .address-input {
+    flex-shrink: 0;
+    height: 40px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, .1);
+    padding: 0 15px;
+    font-size: 14px;
+    input {
+      &::placeholder {
+        color: rgba(255, 255, 255, .3)
+      }
+    }
+  }
+  .address-btn {
+    padding: 0 50px;
+    height: 42px;
+    background: linear-gradient(to right, rgb(14, 199, 138), rgb(21, 250, 163));
+    box-shadow: rgba(21, 250, 163, 0.3) 0px 0px 20px;
+    margin: 0 auto;
+    font-size: 15px;
+    border-radius: 42px;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    span {
+      font-family: 'Proxima Nova:Bold';
+    }
+  }
+}

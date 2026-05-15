@@ -1,0 +1,136 @@
+.withdraw-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  .withdraw-form {
+    background: #FFF;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    .withdraw-title {
+      font-size: 12px;
+      color: #666;
+    }
+    .withdraw-input {
+      border-bottom: 1px solid #EEE;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 0;
+      margin-bottom: 10px;
+      input {
+        flex-grow: 1;
+        height: 40px;
+        border: 0;
+        background: none;
+        font-size: 15px;
+        &::placeholder {
+          color: #999;
+        }
+      }
+      i {
+        flex-shrink: 0;
+        font-style: normal;
+        &.max-amount-btn {
+          font-weight: 500;
+          font-size: 16px;
+          color: #24599B;
+        }
+        &.input-sign {
+          font-weight: 600;
+          font-size: 16px;
+        }
+      }
+    }
+    .withdraw-info {
+      display: flex;
+      justify-content: space-between;
+      span {
+        &:nth-child(2) {
+          color: #24599B;
+        }
+      }
+    }
+    .withdraw-btn {
+      height: 50px;
+      border-radius: 6px;
+      margin-top: 20px;
+      background: #0463B7;
+      font-size: 16px;
+      color: #FFF;
+      font-weight: 600;
+    }
+  }
+  .withdraw-footer {
+    background: #FFF;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    .withdraw-rate-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 50px;
+      li {
+        display: flex;
+        justify-content: space-between;
+        span {
+          &:nth-child(2) {
+            font-weight: 600;
+          }
+        }
+      }
+    }
+    .withdraw-btn {
+      height: 50px;
+      border-radius: 6px;
+      margin-top: 20px;
+      background: #0463B7;
+      font-size: 16px;
+      color: #FFF;
+      font-weight: 600;
+    }
+  }
+  .recharge-record {
+    background: #FFF;
+    padding: 20px;
+  }
+  .recharge-record-title {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .recharge-record-list {
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+    .empty {
+      margin: 50px 0;
+    }
+    .record-item {
+      display: flex;
+      justify-content: space-between;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #EEE;
+      .record-item-left {
+        p {
+          font-size: 12px;
+          line-height: 22px;
+          &:nth-child(1) {
+            font-size: 14px;
+          }
+        }
+      }
+      .record-item-right {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        font-weight: 500;
+      }
+    }
+  }
+}

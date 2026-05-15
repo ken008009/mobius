@@ -1,0 +1,27 @@
+.log-page {
+  background: #FFF;
+  padding: 30px 15px;
+  .log-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 30px;
+    .log-item {
+      display: flex;
+      height: 36px;
+      line-height: 36px;
+      .log-item-date {
+        width: 50%;
+        flex-shrink: 0;
+        text-align: center;
+      }
+      .log-item-remark {
+        width: 50%;
+        text-align: center;
+      }
+      &:nth-child(1) {
+        font-weight: bold;
+      }
+    }
+  }
+}

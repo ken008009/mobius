@@ -1,0 +1,156 @@
+.about-page {
+  padding-top: 80px;
+  &:after{
+    display:block;
+    content:"clear";
+    height:0;
+    clear:both;
+    overflow:hidden;
+    visibility:hidden;
+  }
+  .about-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    p {
+      width: 280px;
+      font-family: 'Proxima Nova:Regular';
+      color: #FFF;
+      text-align: center;
+      &:nth-child(1) {
+        font-size: 17px;
+      }
+      &:nth-child(3) {
+        font-size: 15px;
+      }
+    }
+    h2 {
+      text-align: center;
+      font-family: 'Proxima Nova:Bold';
+      line-height: 38px;
+      color: #15FAA3;
+      font-size: 32px;
+    }
+    .go-staking-btn {
+      width: 255px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 32px;
+      background: #15FAA3;
+      color: #000;
+      font-size: 15px;
+      font-family: 'Proxima Nova:Bold';
+      margin: 24px 0;
+    }
+  }
+  .about-list {
+    padding: 10px 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    .about-list-item {
+      padding: 32px;
+      background: #181D21;
+      border-radius: 16px;
+      p {
+        color: #FFF;
+        font-size: 14px;
+        font-family: 'Proxima Nova:Regular';
+        &:nth-child(3) {
+          font-size: 18px
+        }
+      }
+    }
+  }
+  .about-info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 30px 25px;
+    .about-info-title {
+      text-align: center;
+      font-family: 'Proxima Nova:Bold';
+      line-height: 38px;
+      color: #15FAA3;
+      font-size: 32px;
+    }
+    .about-info-content {
+      text-align: center;
+      color: #FFF;
+      font-size: 15px;
+      font-family: 'Proxima Nova:Regular';
+    }
+  }
+  .about-image {
+    margin: 40px 0;
+  }
+  .about-list-2 {
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 37px;
+    margin: 0 20px;
+    .about-list-item {
+      background: #181D21;
+      border-radius: 16px;
+      padding: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+      h3 {
+        text-align: center;
+        font-family: 'Proxima Nova:Bold';
+        color: #15FAA3;
+        font-size: 17px;
+      }
+      p {
+        text-align: center;
+        font-size: 15px;
+        color: #FFF;
+        font-family: 'Proxima Nova:Regular';
+      }
+    }
+  }
+  .about-link {
+    padding: 40px 25px;
+    display: flex;
+    flex-direction: column;
+    .about-link-title {
+      font-size: 32px;
+      line-height: 38px;
+      color: #15FAA3;
+      text-align: center;
+      font-family: 'Proxima Nova:Bold';
+      margin-bottom: 20px;
+    }
+    ul {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      li {
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #181D21;
+        a {
+          color: #FFF;
+          font-family: 'Proxima Nova:Regular';
+          font-size: 20px;
+        }
+      }
+    }
+  }
+  .footer-logo {
+    width: 74px;
+    height: 74px;
+    background: url('@images/m/m18.png') no-repeat;
+    background-size: 74px 74px;
+    margin: 80px auto;
+  }
+}

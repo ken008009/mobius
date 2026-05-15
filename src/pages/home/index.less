@@ -1,0 +1,362 @@
+.home-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #000;
+  .banner {
+    width: 100%;
+    height: 450px;
+    position: relative;
+    overflow: hidden;
+    .banner-video {
+      height: 420px;
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      z-index: 0;
+    }
+    .banner-text {
+      width: 248px;
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+    }
+    h2 {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      color: #15FAA3;
+      font-family: 'Proxima Nova:Bold';
+      line-height: 38px;
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    h3 {
+      color: #FFF;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      font-family: 'Proxima Nova:Bold';
+      font-size: 24px;
+    }
+    p {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      font-size: 17px;
+      line-height: 24px;
+    }
+  }
+  .notice-box {
+    width: 70%;
+    margin: 20px auto 0;
+    display: flex;
+    align-items: flex-start;
+    background: #222;
+    padding: 10px 15px;
+    border-radius: 6px;
+    overflow: hidden;
+
+    .notice-title {
+      margin-top: 4px;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+
+    .notice {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .notice-wrapper {
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .notice-item {
+      color: #fff;
+      font-size: 12px;
+      line-height: 1.5; // ✅ 支持多行
+      padding: 4px 0;
+    }
+  }
+  .scroll-more {
+    width: 290px;
+    margin: 100px 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+  .page-title {
+    margin-bottom: 55px;
+    h3 {
+      color: #15FAA3;
+      font-family: 'Proxima Nova:Bold';
+      font-size: 24px;
+      text-align: center;
+    }
+    p {
+      font-size: 17px;
+      color: #FFF;
+      text-align: center;
+    }
+  }
+  .title-1 {
+    width: 290px;
+  }
+  .title-2 {
+    width: 290px;
+  }
+  .video-1 {
+    width: 250px;
+    height: 390px;
+    background: #333;
+    margin-bottom: 55px;
+    border-radius: 16px;
+    overflow: hidden;
+    .video-content-1 {
+      width: 250px;
+      height: 390px;
+      object-fit: cover;
+    }
+  }
+  .page-list {
+    width: 100%;
+    margin-bottom: 55px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .list-1 {
+    min-height: 560px;
+    background: url('@images/m/m10.png') no-repeat;
+    background-size: 100% auto;
+    ul {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 360px 32px 0 32px;
+      li {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+        padding: 32px;
+        background-color: rgb(24, 29, 33);
+        border-radius: 48px;
+        p {
+          color: #FFF;
+          font-family: "Proxima Nova:Regular", sans-serif;
+          word-break: break-word;
+          font-style: normal;
+          font-size: 17px;
+          letter-spacing: 0px;
+          text-align: center;
+          line-height: normal;
+          &:nth-child(1) {
+            font-family: "Proxima Nova:Bold", sans-serif;
+            word-break: break-word;
+            font-style: normal;
+            font-size: 17px;
+            letter-spacing: 0px;
+            text-align: center;
+            line-height: normal;
+          }
+        }
+      }
+    }
+  }
+  .list-2 {
+    min-height: 560px;
+    background: url('@images/m/m13.png') no-repeat;
+    background-size: 100% auto;
+    .video-2 {
+      width: 250px;
+      height: 390px;
+      background: #333;
+      margin-bottom: 55px;
+      border-radius: 16px;
+      overflow: hidden;
+      .video-content-1 {
+        width: 250px;
+        height: 390px;
+        object-fit: cover;
+      }
+    }
+  }
+  .subtitle-1 {
+    width: 290px;
+    color: #15FAA3;
+    font-family: 'Proxima Nova:Bold';
+    font-size: 24px;
+    text-align: center;
+  }
+  .subtitle-2 {
+    width: 290px;
+    color: #15FAA3;
+    font-family: 'Proxima Nova:Bold';
+    font-size: 24px;
+    text-align: center;
+    margin-top: 95px;
+    margin-bottom: 500px;
+  }
+  .subtitle-3 {
+    width: 290px;
+    color: #15FAA3;
+    font-family: 'Proxima Nova:Bold';
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .subtitle-4 {
+    width: 290px;
+    color: #15FAA3;
+    font-family: 'Proxima Nova:Bold';
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .switch-box {
+    width: 263px;
+    margin-bottom: 20px;
+    .switch-main {
+      width: 263px;
+      .switch-item {
+        background-color: rgb(24, 29, 33);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        border-radius: 48px;
+        padding: 32px;
+        width: 263px;
+        height: 230px;
+        p {
+          color: #FFF;
+          &:nth-child(1) {
+            font-family: "Proxima Nova:Bold", sans-serif;
+            word-break: break-word;
+            font-style: normal;
+            font-size: 17px;
+            letter-spacing: 0px;
+            text-align: center;
+            line-height: normal;
+          }
+          &:nth-child(2) {
+            font-family: "Proxima Nova:Regular", sans-serif;
+            word-break: break-word;
+            font-style: normal;
+            font-size: 17px;
+            letter-spacing: 0px;
+            text-align: center;
+            line-height: normal;
+            span {
+              font-family: "Proxima Nova:Bold", sans-serif;
+              color: rgb(21, 250, 163);
+            }
+          }
+        }
+      }
+      .active {
+        display: flex;
+      }
+    }
+    .switch-footer {
+      padding-top: 30px;
+      position: relative;
+      ul {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        li {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          opacity: 0.32;
+          background-color: rgb(255, 255, 255);
+          &.active {
+            opacity: 1;
+          }
+        }
+      }
+      .switch-arrow {
+        width: 32px;
+        height: 32px;
+        background-color: rgb(24, 29, 33);
+        background-image: url('@images/m/m16.png');
+        background-size: 8px 13px;
+        background-position: center center;
+        background-repeat: no-repeat;
+        display: block;
+        border-radius: 50%;
+        position: absolute;
+        right: 0;
+        top: 15px;
+      }
+    }
+  }
+  .nodes-list {
+    width: 263px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    li {
+      display: flex;
+      background-color: rgb(24, 29, 33);
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      border-radius: 48px;
+      padding: 32px;
+      width: 263px;
+      p {
+        color: #FFF;
+        &:nth-child(1) {
+          font-family: "Proxima Nova:Bold", sans-serif;
+          word-break: break-word;
+          font-style: normal;
+          font-size: 17px;
+          letter-spacing: 0px;
+          text-align: center;
+          line-height: normal;
+        }
+        &:nth-child(2) {
+          font-family: "Proxima Nova:Regular", sans-serif;
+          word-break: break-word;
+          font-style: normal;
+          font-size: 17px;
+          letter-spacing: 0px;
+          text-align: center;
+          line-height: normal;
+          span {
+            font-family: "Proxima Nova:Bold", sans-serif;
+            color: rgb(21, 250, 163);
+          }
+        }
+      }
+    }
+  }
+  .footer-logo {
+    width: 74px;
+    height: 74px;
+    background: url('@images/m/m18.png') no-repeat;
+    background-size: 74px 74px;
+    margin: 80px auto;
+  }
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "contextSeparator": "_",
+  "keySeparator": false,
+  "createOldCatalogs": false,
+  "output": "./src/locales/$LOCALE/$NAMESPACE.json",
+  "locales": [
+    "en-US",
+    "ar",
+    "ms",
+    "en-SG",
+    "en-IN",
+    "ru",
+    "ur",
+    "ja",
+    "ko",
+    "th",
+    "zh-HK",
+    "zh-CN"
+  ],
+  "defaultNamespace": "translation"
+}

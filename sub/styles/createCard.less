@@ -1,0 +1,47 @@
+.create-card-page {
+  .rv-cell {
+    border-bottom: 1px solid #FAFAFA;
+    padding: 10px 30px;
+    &::before {
+      left: 20px;
+    }
+  }
+  .rv-button--primary {
+    background: #0264B7;
+    border-color: #0264B7;
+  }
+}
+.form-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 30px;
+  height: 44px;
+  .form-label {
+    width: 86px;
+    font-size: 14px;
+    margin-right: 14px;
+    &::before {
+      position: absolute;
+      left: 20px;
+      color: var(--rv-cell-required-color);
+      font-size: var(--rv-cell-font-size);
+      content: '*';
+    }
+  }
+  .form-value {
+    display: flex;
+    .country-block {
+      display: flex;
+      align-items: center;
+    }
+    .rv-cell--required::before {
+      display: none;
+    }
+    .rv-cell {
+      padding: 0;
+    }
+    .country-code {
+      width: 100%;
+    }
+  }
+}

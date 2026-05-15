@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>card</title>
+    <meta name="viewport" content="viewport-fit=cover,width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    <style type="text/css">
+      html, body, p {
+        margin: 0;
+        padding: 0;
+      }
+      div {
+        box-sizing: border-box;
+      }
+      .card {
+        width: 100%;
+        height: 200px;
+        border-radius: 12px;
+        color: #FFF;
+        padding: 40px 10%;
+      }
+      .card .card-nember {
+        font-weight: bold;
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 40px;
+      }
+      .card .card-info {
+        display: flex;
+        gap: 20px;
+      }
+      .card .card-exp {
+        font-size: 14px;
+      }
+      .card .card-exp p:nth-child(1) {
+        font-size: 12px;
+        margin-bottom: 10px;
+      }
+      .card .card-exp p:nth-child(2) {
+        font-size: 16px;
+        font-weight: bold;
+      }
+      .card .card-cvv {
+        width: 70px;
+        font-size: 14px;
+      }
+      .card .card-cvv p:nth-child(1) {
+        font-size: 12px;
+        margin-bottom: 10px;
+      }
+      .card .card-cvv p:nth-child(2) {
+        font-size: 16px;
+        font-weight: bold;
+      }
+      .card .card-content {
+        height: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="card-nember">
+        <div class="card-content" id="card-pan"></div>
+      </div>
+      <div class="card-info">
+        <div class="card-exp">
+          <p>VALID THRU</p>
+          <p>
+            <div class="card-content" id="card-exp"></div>
+          </p>
+        </div>
+        <div class="card-cvv">
+          <p>CVV</p>
+          <p>
+            <div class="card-content" id="card-cvv"></div>
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- div elements for displaying and copying PAN, expiration date, and CVV -->
+    <!-- <div>
+      <div class="card-info-list">
+        <div class="info-list-item">
+          <div class="list-item-label">Card NUMBER:</div>
+          <div class="list-item-content">
+            <div class="card-content" id="card-pan"></div>
+            <div class="card-copy" id="copy-pan-container" style="position: relative">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAMAAAAM7l6QAAAAD1BMVEVHcEwrKyssLCwrKyssLCz8+antAAAABHRSTlMAQL+ATezaDQAAAGVJREFUeNq90DEOwCAMQ9E49v3P3A5AkEwRA+pbP0qAaChDxEC5jAKTQmz0jDSsTC3kyBKN1DOUy70Xs0oe5f+uloWeoYnnYMH1q6EG7z71I7Medbibil1+3cgw0nRygSODMtlmP48xBPs8bkWaAAAAAElFTkSuQmCC" alt="Copy card number" id="copy-card-pan" />
+            </div>
+          </div>
+        </div>
+        <div class="info-list-item">
+          <div class="list-item-label">Card EXP:</div>
+          <div class="list-item-content">
+            <div class="card-content" id="card-exp"></div>
+            <div class="card-copy" id="copy-exp-container" style="position: relative">
+              <img
+                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAMAAAAM7l6QAAAAD1BMVEVHcEwrKyssLCwrKyssLCz8+antAAAABHRSTlMAQL+ATezaDQAAAGVJREFUeNq90DEOwCAMQ9E49v3P3A5AkEwRA+pbP0qAaChDxEC5jAKTQmz0jDSsTC3kyBKN1DOUy70Xs0oe5f+uloWeoYnnYMH1q6EG7z71I7Medbibil1+3cgw0nRygSODMtlmP48xBPs8bkWaAAAAAElFTkSuQmCC"
+                alt="Copy expiration date"
+                id="copy-card-exp"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="info-list-item">
+          <div class="list-item-label">Card CVV:</div>
+          <div class="list-item-content">
+            <div class="card-content" id="card-cvv"></div>
+            <div class="card-copy" id="copy-cvv-container" style="position: relative">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAMAAAAM7l6QAAAAD1BMVEVHcEwrKyssLCwrKyssLCz8+antAAAABHRSTlMAQL+ATezaDQAAAGVJREFUeNq90DEOwCAMQ9E49v3P3A5AkEwRA+pbP0qAaChDxEC5jAKTQmz0jDSsTC3kyBKN1DOUy70Xs0oe5f+uloWeoYnnYMH1q6EG7z71I7Medbibil1+3cgw0nRygSODMtlmP48xBPs8bkWaAAAAAElFTkSuQmCC" alt="Copy CVV" id="copy-card-cvv" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- Reference Widget.js -->
+    <script src="https://static.univisioncard.com/api/sdk/card/1.0.0/index.min.js" type="text/javascript"></script>
+
+    <script>
+      const styles = {
+        cardExp: {
+          styles: {
+            span: {
+              background: "none",
+              color: "#FFF",
+              "font-family": "monospace",
+              "font-size": "16px",
+              "letter-spacing": "2px",
+              "font-weight": "bold",
+            },
+          },
+        },
+      };
+      const params = new URLSearchParams(window.location.search);
+      const clientAccessToken = params.get('clientAccessToken');
+      const background = params.get('background');
+
+      const cardDom = document.querySelector('.card')
+      
+      if (background) {
+        cardDom.style.background = `url('${background}') no-repeat`
+        cardDom.style.backgroundSize = `cover`
+      } else {
+        cardDom.style.background = 'linear-gradient(135deg, #3b4a6b, #1e293b)';
+      }
+      // Call the bootstrap method
+      widget.bootstrap({
+        clientAccessToken,
+        component: {
+          showPan: {
+            cardPan: {
+              domId: "card-pan",
+              format: true,
+              styles: styles.cardExp.styles, // A custom styles object
+            },
+            cardExp: {
+              domId: "card-exp",
+              format: true,
+              styles: styles.cardExp.styles, // A custom styles object
+            },
+            cardCvv: {
+              domId: "card-cvv",
+              styles: styles.cardExp.styles, // A custom styles object
+            },
+          },
+        },
+        callbackEvents: {
+          onSuccess: () => console.log("Success!"),
+          onFailure: (error) => console.error(error),
+        },
+      });
+    </script>
+  </body>
+</html>
