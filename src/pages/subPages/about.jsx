@@ -41,7 +41,7 @@ const About = (props) => {
           <a href="#" className="go-staking-btn" onClick={e => {
             e.preventDefault()
             props.navigate('/staking')
-          }}>{t('Participate in Liquidity Staking')}</a>
+          }}>开始理财</a>
         </div>
         <div className="about-list">
           <div className="about-list-item">

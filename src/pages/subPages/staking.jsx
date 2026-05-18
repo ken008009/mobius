@@ -38,7 +38,6 @@ const AddressForm = (props) => {
 const Staking = (props) => {
   const [active, setActive] = useState('0')
   const [amount, setAmount] = useState('')
-  const [count, setCount] = useState(1)
   const [orders, setOrders] = useState([])
   const [usdtApprove, setUsdtApprove] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -133,20 +132,11 @@ const Staking = (props) => {
     if (!approve) return handleUsdtApprove(parentAddress)
     const amountNum = new Big(amount).times('1e18').toFixed(0)
     try {
-      if (count > 1) {
-        if (parentAddress) {
-          await ETH.batchStakeWithInviter(amountNum, '0', active, parentAddress, count)
-          setIsRegistered(true)
-        } else {
-          await ETH.batchStake(amountNum, '0', active, count)
-        }
+      if (parentAddress) {
+        await ETH.stakeWithInviter(amountNum, '0', active, parentAddress)
+        setIsRegistered(true)
       } else {
-        if (parentAddress) {
-          await ETH.stakeWithInviter(amountNum, '0', active, parentAddress)
-          setIsRegistered(true)
-        } else {
-          await ETH.stake(amountNum, '0', active)
-        }
+        await ETH.stake(amountNum, '0', active)
       }
 
       setAmount('')
@@ -198,36 +188,11 @@ const Staking = (props) => {
           </div>
         </div>
         <div className="staking-banner">
-          <h3>{t('Staking')}</h3>
+          <h3>理财</h3>
           <p>{t('Mobius Strip')}, {t('a blockchain gaming ecosystem based on the 19th-century German mathematician August Ferdinand Möbius')}, {t('features a fully integrated')}, {t('infinitely circulating financial protocol')}.</p>
         </div>
-        <div className="staking-tab">
-          <div className={classnames('staking-tab-item', {active: active === '0'})} onClick={() => setActive('0')}>
-            <h3><ClockCircleOutlined />30 {t('Days')}</h3>
-            <p>
-              <span>{t('Daily Rate')}</span>
-              <span>1.2%</span>
-            </p>
-            <p>
-              <span>{t('Total Return')}</span>
-              <span>143%</span>
-            </p>
-          </div>
-          <div className={classnames('staking-tab-item', {active: active === '1'})} onClick={() => setActive('1')}>
-            <h3><ClockCircleOutlined />180 {t('Days')}</h3>
-            <p>
-              <span>{t('Daily Rate')}</span>
-              <span>1.3%</span>
-            </p>
-            <p>
-              <span>{t('Total Return')}</span>
-              <span>1022%</span>
-            </p>
-          </div>
-        </div>
         <div className="staking-amount">
-          <div className="staking-amount-hint"><InfoCircleOutlined />{t('Staking amount per order')}200～1000USDT</div>
-          <div className="staking-amount-title">{t('Staking Amount')}（USDT）</div>
+          <div className="staking-amount-title">理财金额（USDT）</div>
           <div className="staking-amount-form" style={{marginBottom: 20}}>
             <input type="number" value={amount} onChange={e => {
               const maxAmount = new Big(maxStakeAmountNow).toString()
@@ -237,20 +202,10 @@ const Staking = (props) => {
               }
 
               setAmount(e.target.value)
-            }} placeholder={t('Enter staking amount')} className="amount-input" />
-            <button className="amount-max-btn" onClick={() => handleSelectMax()}>{t('MAX')}</button>
+            }} placeholder="请输入理财金额" className="amount-input" />
           </div>
-          <div className="staking-amount-title">{t('Purchase Quantity')}</div>
-          <div className="staking-amount-form">
-            <input type="number" value={count} onChange={e => {
-              setCount(e.target.value)
-            }} onBlur={e => {
-              if (e.target.value < 1) return setCount(1)
-            }} placeholder={t('Enter Purchase Quantity')} className="amount-input" />
-          </div>
-          <div className="staking-hint">{t('maturityAmount')}：{calcInterest(count, amount, active === '0' ? 1.012 : 1.013, active === '0' ? 30 : 180).toFixed(3)} USDT</div>
         </div>
-        <Button loading={loading} className="staking-btn" onClick={() => handleRegistered()}>{t('Start Liquidity Staking')}</Button>
+        <Button loading={loading} className="staking-btn" onClick={() => handleRegistered()}>开始理财</Button>
         <div className="staking-log">
           <div className="staking-log-title">{t('Waiting list')}</div>
           <div className="staking-log-list">
@@ -269,10 +224,6 @@ const Staking = (props) => {
                   <div className="queue-row">
                     <span className="queue-label">{t('Queue Time')}：</span>
                     <span className="queue-value">{dayjs(item.queuedAt.toString() * 1000).format('YYYY-MM-DD hh:mm:ss')}</span>
-                  </div>
-                  <div className="queue-row">
-                    <span className="queue-label">{t('Staking Cycle')}：</span>
-                    <span className="queue-value">{item.stakeIndex.toString() === '0' ? '30' : '180'}</span>
                   </div>
                   <div className="queue-row">
                     <span className="queue-label">{t('Status')}：</span>
