@@ -177,9 +177,7 @@ const Header = (props) => {
             <div className={classnames('menu-item', {active: location.pathname === '/about'})} onClick={() => openPage('/about')}>{t('ABOUT')}</div>
             <div className={classnames('menu-item', {active: location.pathname === '/staking'})} onClick={() => openPage('/staking')}>{t('STAKING')}</div>
             <div className={classnames('menu-item', {active: location.pathname === '/community'})} onClick={() => openPage('/community')}>{t('COMMUNITY')}</div>
-            <div className={classnames('menu-item', {active: location.pathname === '/nodes'})} onClick={() => openPage('/nodes')}>{t('NODES')}</div>
             <div className={classnames('menu-item', {active: location.pathname === '/courses'})} onClick={() => openPage('/courses')}>{t('COURSES')}</div>
-            <div className={classnames('menu-item', {active: location.pathname === '/hls'})} onClick={() => openPage('/hls')}>{t('HLS')}</div>
           </div>
           <div className="sidebar-foot">
             <button className="language-btn" onClick={() => setPickerVisible(true)}>

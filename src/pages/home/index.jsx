@@ -97,62 +97,6 @@ const Home = (props) => {
             </li>
           </ul>
         </div>
-        <div className="page-list list-2">
-          <div className="subtitle-2">{t('Decentralized by Design')}</div>
-          <div className="video-2">
-            <video
-              className="video-content-1"
-              autoPlay
-              muted
-              loop
-              playsInline
-              webkit-playsinline="true"
-              poster={videoImage2}
-            >
-              <source src={video2} type="video/mp4" />
-            </video>
-          </div>
-          <div className="subtitle-3">{t('Genesis Node Rewards')}</div>
-          <div className="switch-box">
-            <div className="switch-main">
-              <div className={classnames('switch-item', {active: tab === 1})}>
-                <p>{t('Transaction Tax Dividends')}</p>
-                <p>{t('Genesis nodes participate in revenue generated from transaction taxes within the ecosystem')}.</p>
-              </div>
-              <div className={classnames('switch-item', {active: tab === 2})}>
-                <p>{t('Profit-Tax Bonus')}</p>
-                <p>{t('Additional ecosystem profits may generate bonus rewards distributed to node participants')}.</p>
-              </div>
-              <div className={classnames('switch-item', {active: tab === 3})}>
-                <p>{t('Node Rewards')}</p>
-                <p>{t('Genesis nodes will receive slippage rewards provided by the system')}, {t('as well as daily airdrop rewards')}.</p>
-              </div>
-            </div>
-            <div className="switch-footer">
-              <ul>
-                <li className={classnames({active: tab === 1})} onClick={() => setTab(1)}></li>
-                <li className={classnames({active: tab === 2})} onClick={() => setTab(2)}></li>
-                <li className={classnames({active: tab === 3})} onClick={() => setTab(3)}></li>
-              </ul>
-              <i className="switch-arrow" onClick={() => nextSwitch()}></i>
-            </div>
-          </div>
-        </div>
-        <div className="subtitle-4">{t('Genesis Nodes')}</div>
-        <ul className="nodes-list">
-          <li>
-            <p>{t('Limited Supply')}</p>
-            <p>{t('Only')} <span>500 {t('Genesis Nodes')}</span> {t('exist in the system, creating scarcity within the ecosystem')}.</p>
-          </li>
-          <li>
-            <p>{t('Node Advantages')}</p>
-            <p>{t('Each node will receive tax-based dividend distributions and earn MS token rewards from the reward pool')}.</p>
-          </li>
-          <li>
-            <p>{t('LP Transparency')}</p>
-            <p>{t('Node contributions strengthen the LP pool and support the overall stability of the Mobius Strip economy')}.</p>
-          </li>
-        </ul>
         <div className="footer-logo"></div>
       </div>
     </>
