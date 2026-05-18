@@ -118,7 +118,7 @@ const Community = (props) => {
               </div>
             )
           }
-          <div className="community-info-item">
+          <div className="community-info-item full-width">
             <h3>{t('My Level')}</h3>
             <p>{level}</p>
           </div>
