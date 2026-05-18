@@ -169,23 +169,8 @@ const Staking = (props) => {
   return (
     <>
       <div className="staking-page">
-        <div className="staking-info">
-          <div className="staking-info-item">
-            <h3>{t('Total Pending Orders')}</h3>
-            <p>{queueLength === null ? '-' : queueLength}</p>
-          </div>
-          {/* <div className="staking-info-item">
-            <h3>{t('Current Progress')}</h3>
-            <p>{queueCursor === null ? '-' : queueCursor}</p>
-          </div> */}
-          <div className="staking-info-item">
-            <h3>{t('Total Queued Orders')}</h3>
-            <p>{waitingCount === null ? '-' : waitingCount}</p>
-          </div>
-          <div className="staking-info-item">
-            <h3>{t('Position in Queue')}</h3>
-            <p>{firstWaitingPosition === null ? '-' : firstWaitingPosition}</p>
-          </div>
+        <div className="staking-join-team">
+          加入团队
         </div>
         <div className="staking-banner">
           <h3>理财</h3>

@@ -119,23 +119,42 @@ const Community = (props) => {
             )
           }
           <div className="community-info-item">
-            <h3>{t('Team Performance')}</h3>
-            <p>{perf} US$</p>
-          </div>
-          <div className="community-info-item">
             <h3>{t('My Level')}</h3>
             <p>{level}</p>
           </div>
           <div className="community-info-item">
-            <h3>{t('My Performance')}</h3>
-            <p>{teamCount} US$</p>
+            <h3>{t('Team Performance')}</h3>
+            <p>{perf} US$</p>
           </div>
           <div className="community-info-item">
-            <h3>{t('My Stake Amount')}</h3>
-            <p>{baseStakedAmount} US$</p>
+            <h3>已领取团队奖励</h3>
+            <p>{teamCount} US$</p>
           </div>
         </div>
-        {/* <div className="community-data">
+
+        <div className="community-reward">
+          <div className="reward-header">
+            <h3 className="reward-title">今日奖励</h3>
+            <p className="reward-amount">{teamCount} US$</p>
+          </div>
+          <div className="reward-content">
+            <div className="reward-item">
+              <span className="reward-label">所需盈利宝额度</span>
+              <span className="reward-value">7,000 USDT</span>
+            </div>
+            <div className="reward-item highlight">
+              <span className="reward-label">需补足金额</span>
+              <span className="reward-value">3,000 USDT</span>
+            </div>
+            <div className="reward-notice">
+              <span>⏰ 7天内领取，否则奖励不再计算</span>
+            </div>
+          </div>
+          <button className="reward-buy-btn">一键购买额度</button>
+        </div>
+
+
+        {/* {<div className="community-data">
           <div className="community-data-item">
             <span>My Performance：</span>{teamCount}
           </div>
@@ -145,7 +164,7 @@ const Community = (props) => {
           <div className="community-data-item">
             <span>Cumulative income</span>
           </div>
-        </div> */}
+        </div> } */}
         <div className="community-list">
           <div className="community-list-title">{t('Team List')}</div>
           <div className="community-table">
