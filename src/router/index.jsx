@@ -7,6 +7,7 @@ const Staking = lazy(() => import('@pages/subPages/staking'));
 const Community = lazy(() => import('@pages/subPages/community'));
 const Nodes = lazy(() => import('@pages/subPages/nodes'));
 const Courses = lazy(() => import('@pages/subPages/courses'));
+const Notices = lazy(() => import('@pages/subPages/notices'));
 const Hls = lazy(() => import('@pages/subPages/hls'));
 
 const routes = [
@@ -16,6 +17,7 @@ const routes = [
   { path: '/community', element: Community},
   { path: '/nodes', element: Nodes},
   { path: '/courses', element: Courses},
+  { path: '/notices', element: Notices},
   { path: '/hls', element: Hls},
   { path: '/admin', element: Admin},
 ]

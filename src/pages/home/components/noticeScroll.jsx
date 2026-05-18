@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ChevronRight } from 'lucide-react'
 
 const NoticeScroll = (props) => {
   const { t } = props
+  const navigate = useNavigate()
 
   const notices = [
     t('Considering the queue cycle of the MS financial project across multiple markets and its impact on team income and motivation, it has been decided to comprehensively upgrade the MS system. The upgraded MS 2.0 system will fully resolve the impact of queue cycles on earnings, while team rewards will also be comprehensively optimized.'),
@@ -74,6 +77,10 @@ const NoticeScroll = (props) => {
             ))}
           </div>
         </div>
+
+        <div className="notice-more notice-title" onClick={() => navigate('/notices')}>
+          <ChevronRight size={20} color="#15FAA3" />
+        </div>
       </div>
 
       <style>{`
@@ -106,6 +113,17 @@ const NoticeScroll = (props) => {
           padding: 4px 0;
           width: 100%;
           box-sizing: border-box;
+        }
+        .notice-more {
+          flex-shrink: 0;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: transform 0.2s;
+        }
+        .notice-more:hover {
+          transform: translateX(3px);
         }
       `}</style>
     </>
