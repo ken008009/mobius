@@ -5,6 +5,7 @@ import classnames from 'classnames'
 import dayjs from 'dayjs'
 import { Contract, ETH } from '@tools/contract'
 import Big from 'big.js';
+import FireVideo from '@components/FireVideo'
 import './styles/staking.less'
 
 const USDT = new Contract(import.meta.env.VITE_USDT, "ERC20");
@@ -176,10 +177,13 @@ const Staking = (props) => {
   
         <div className="staking-banner">
           <h3>理财</h3>
-          300%
+          <FireVideo />
         </div>
         <div className="staking-amount">
-          <div className="staking-amount-title">理财金额（USDT）最低200USDT</div>
+          <div className="staking-amount-title">
+            <span>理财金额（USDT）</span>
+            <span className="staking-amount-hint">最低 200 USDT</span>
+          </div>
           <div className="staking-amount-form" style={{marginBottom: 20}}>
             <input type="number" value={amount} onChange={e => {
               const maxAmount = new Big(maxStakeAmountNow).toString()
@@ -195,12 +199,19 @@ const Staking = (props) => {
         <Button loading={loading} className="staking-btn" onClick={() => handleRegistered()}>开始理财</Button>
 
 
-        <div className="staking-banner">
-          盈利宝总额度 
-          9000
-          可领取额度 
-          8000
-          一键领取
+        <div className="profit-treasure">
+          <div className="profit-treasure-title">盈利宝</div>
+          <div className="profit-treasure-content">
+            <div className="profit-treasure-item">
+              <div className="profit-treasure-label">总额度</div>
+              <div className="profit-treasure-value">9,000 USDT</div>
+            </div>
+            <div className="profit-treasure-item">
+              <div className="profit-treasure-label">可领取额度</div>
+              <div className="profit-treasure-value">8,000 USDT</div>
+            </div>
+            <button className="profit-treasure-btn">一键领取</button>
+          </div>
         </div>
        
        {/* 订单  额度 每日释放额度   剩余天数   已领取额度 */}

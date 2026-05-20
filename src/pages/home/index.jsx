@@ -3,7 +3,6 @@ import StoreContext from '@store/context';
 import bannerVideo from '@images/m/57a7bbbfe4a006fcf7e9e40af6230fb522625f0a.mp4'
 import video1 from '@images/m/89be22823b99beac83496e29ae0da873e0799c85.mp4'
 import video2 from '@images/m/cde96ae1fc733be6f4d295218a4d1626ae6dc94d.mp4'
-import fireVideo from '@images/300fire.mp4'
 import MoreArrowIcon from '@images/m/more-arrow-icon.svg?react'
 import videoImage1 from '@images/m/m7.png'
 import videoImage2 from '@images/m/m14.png'
@@ -12,6 +11,7 @@ import AboutListIcon3 from '@images/m/about-list-icon-3.svg?react'
 import { ETH } from '@tools/contract'
 import classnames from 'classnames'
 import NoticeScroll from './components/noticeScroll'
+import FireVideo from '@components/FireVideo'
 import './index.less'
 
 const Home = (props) => {
@@ -67,16 +67,7 @@ const Home = (props) => {
           </div>
         </div>
 
-        <video
-          className="fire-video"
-          autoPlay
-          muted
-          loop
-          playsInline
-          webkit-playsinline="true"
-        >
-          <source src={fireVideo} type="video/mp4" />
-        </video>
+        <FireVideo />
 
         <a href="#" className="go-staking-btn" onClick={e => {
             e.preventDefault()
