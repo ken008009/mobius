@@ -169,15 +169,17 @@ const Staking = (props) => {
   return (
     <>
       <div className="staking-page">
-        <div className="staking-join-team">
+        {/* <div className="staking-join-team">
           加入团队
-        </div>
+        </div> */}
+
+  
         <div className="staking-banner">
           <h3>理财</h3>
-          <p>{t('Mobius Strip')}, {t('a blockchain gaming ecosystem based on the 19th-century German mathematician August Ferdinand Möbius')}, {t('features a fully integrated')}, {t('infinitely circulating financial protocol')}.</p>
+          300%
         </div>
         <div className="staking-amount">
-          <div className="staking-amount-title">理财金额（USDT）</div>
+          <div className="staking-amount-title">理财金额（USDT）最低200USDT</div>
           <div className="staking-amount-form" style={{marginBottom: 20}}>
             <input type="number" value={amount} onChange={e => {
               const maxAmount = new Big(maxStakeAmountNow).toString()
@@ -191,8 +193,19 @@ const Staking = (props) => {
           </div>
         </div>
         <Button loading={loading} className="staking-btn" onClick={() => handleRegistered()}>开始理财</Button>
+
+
+        <div className="staking-banner">
+          盈利宝总额度 
+          9000
+          可领取额度 
+          8000
+          一键领取
+        </div>
+       
+       {/* 订单  额度 每日释放额度   剩余天数   已领取额度 */}
         <div className="staking-log">
-          <div className="staking-log-title">{t('Waiting list')}</div>
+          <div className="staking-log-title">订单记录</div>
           <div className="staking-log-list">
             {orders.length === 0 && <div className="no-data">{t('No pending orders')}</div>}
             {

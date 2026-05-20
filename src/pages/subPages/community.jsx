@@ -141,16 +141,36 @@ const Community = (props) => {
             <div className="reward-item">
               <span className="reward-label">所需盈利宝额度</span>
               <span className="reward-value">7,000 USDT</span>
+              <button className="reward-buy-btn">一键领取</button>
             </div>
             <div className="reward-item highlight">
               <span className="reward-label">需补足金额</span>
               <span className="reward-value">3,000 USDT</span>
+              <button className="reward-buy-btn">一键购买额度</button>
             </div>
             <div className="reward-notice">
               <span>⏰ 7天内领取，否则奖励不再计算</span>
             </div>
           </div>
-          <button className="reward-buy-btn">一键购买额度</button>
+          {/* <button className="reward-buy-btn">一键购买额度</button> */}
+        </div>
+
+
+        {/* 手续费分红。已领取总额U 待领取金额U  一键领取 */}
+        <div className="community-list">
+          <div className="community-list-title">手续费分红</div>
+
+          <div className="fee-reward-content">
+            <div className="fee-reward-item">
+              <div className="fee-reward-label">已领取总额</div>
+              <div className="fee-reward-value">1000 USDT</div>
+            </div>
+            <div className="fee-reward-item">
+              <div className="fee-reward-label">待领取金额</div>
+              <div className="fee-reward-value">500 USDT</div>
+            </div>
+            <button className="reward-buy-btn">一键领取</button>
+          </div>
         </div>
 
 
@@ -165,6 +185,7 @@ const Community = (props) => {
             <span>Cumulative income</span>
           </div>
         </div> } */}
+        {/* 团队明细  序号 地址 盈利宝额度  业绩  团队奖励 */}
         <div className="community-list">
           <div className="community-list-title">{t('Team List')}</div>
           <div className="community-table">
