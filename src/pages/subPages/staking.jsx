@@ -8,8 +8,8 @@ import Big from 'big.js';
 import FireVideo from '@components/FireVideo'
 import './styles/staking.less'
 
-const USDT = new Contract(import.meta.env.VITE_USDT, "ERC20");
-const BUY = new Contract(import.meta.env.VITE_ZYSQ, "BUY");
+// const USDT = new Contract(import.meta.env.VITE_USDT, "ERC20"); // TODO: ABI 未定义
+// const BUY = new Contract(import.meta.env.VITE_ZYSQ, "BUY"); // TODO: ABI 未定义
 
 const AddressForm = (props) => {
   const [parentAddress, setParentAddress] = useState('')
@@ -50,67 +50,86 @@ const Staking = (props) => {
   const [originMaxStakeAmountNow, setOriginMaxStakeAmountNow] = useState('')
   const [firstWaitingPosition, setFirstWaitingPosition] = useState(null)
   const [waitingCount, setWaitingCount] = useState(null)
+  const [minAmount, setMinAmount] = useState(0) // 默认 0，从合约获取后更新
+  const [capLeftTotal, setCapLeftTotal] = useState(0) // 剩余额度
+  const [lineClaimableTotal, setLineClaimableTotal] = useState(0) // 可领取奖励
 
   const { t } = props
 
   useEffect(() => {
-    getMaxStakeAmountNow()
-    getUsdtAllowance()
-    getUsdtBalance()
+    getPlansMinAmount() // 获取最小理财金额
+    getUserCapLeftTotal() // 获取剩余额度
     window.Big = Big
   }, [])
 
-  const getMaxStakeAmountNow = async () => {
-    const globalView = await ETH.getGlobalView()
-    const userQueueInfo = await ETH.getUserQueueInfo()
-
-    const { maxStakeAmountNow, originMaxStakeAmountNow, isRegistered, queueLength, queueCursor } = globalView
-    const { firstWaitingPosition, waitingCount, orders } = userQueueInfo
-
-    setOrders(orders)
-    setWaitingCount(waitingCount.toString())
-    setFirstWaitingPosition(firstWaitingPosition.toString())
-    setQueueLength(queueLength)
-    setQueueCursor(queueCursor)
-    setIsRegistered(isRegistered)
-    setOriginMaxStakeAmountNow(originMaxStakeAmountNow)
-    setMaxStakeAmountNow(maxStakeAmountNow)
-  }
-
-  const getUsdtBalance = async () => {
-    const balance = await ETH.getUSDTBalance()
-    setUsdtBalance(balance)
-  }
-
-
-  const getUsdtAllowance = async (callback) => {
-    let res = await USDT.call("allowance", [ETH.account, BUY.address]);
-    setUsdtApprove(Number(res) > 0)
-    console.log(Number(res))
-    callback && callback(Number(res) > 0)
-  }
-
-  const handleUsdtApprove = (parentAddress) => {
-    USDT.send("approve", [
-        BUY.address,
-        "115792089237316195423570985008687907853269984665640564039457584007913129639935"
-    ]).then(res => {
-      getUsdtAllowance((status) => {
-        if (status) {
-          handleStaking(status, parentAddress)
-        } else {
-          setLoading(false)
+  const getUserCapLeftTotal = async () => {
+    try {
+      const userData = await ETH.userView()
+      console.log('✅ 获取到 userView 数据:', userData)
+      
+      if (userData) {
+        if (userData.capLeftTotal) {
+          const capLeft = ETH.formatUnits(userData.capLeftTotal, 18)
+          console.log('剩余额度:', capLeft)
+          setCapLeftTotal(Number(capLeft))
         }
-      })
-    }).catch(e => {
-      console.log(e)
-      setLoading(false)
-    });
+        if (userData.lineClaimableTotal) {
+          const claimable = ETH.formatUnits(userData.lineClaimableTotal, 18)
+          console.log('可领取奖励:', claimable)
+          setLineClaimableTotal(Number(claimable))
+        }
+      }
+    } catch (error) {
+      console.error('❌ 获取 userView 失败:', error)
+    }
   }
+
+  const getPlansMinAmount = async () => {
+    try {
+      console.log('📡 正在调用 ETH.plans()...')
+      const plans = await ETH.plans()
+      console.log('✅ 获取到 plans 原始数据:', plans)
+      
+      if (plans && plans.length > 0) {
+        console.log('plans[0] 完整数据:', plans[0])
+        console.log('plans[0].minAmount (原始 wei):', plans[0].minAmount.toString())
+        
+        // plans[0].minAmount 是 wei 单位，转换为 USDT（18 位小数）
+        const min = ETH.formatUnits(plans[0].minAmount, 18)
+        console.log('转换后的 minAmount:', min)
+        
+        setMinAmount(Number(min).toFixed(0))
+        console.log('✅ minAmount 状态已更新为:', Number(min).toFixed(0))
+      } else {
+        console.warn('⚠️ plans 返回空数组，使用默认值 0')
+      }
+    } catch (error) {
+      console.error('❌ 获取 plans 失败:', error)
+    }
+  }
+
+  // TODO: 新 ABI 字段与旧代码不匹配，需要重新适配
+  // const getMaxStakeAmountNow = async () => {
+  //   const globalView = await ETH.globalView()
+  //   // 注意：新 ABI 返回的字段名不同
+  //   console.log('globalView', globalView)
+  // }
+
+  // const getUsdtBalance = async () => {
+  //   // 方法已移除
+  // }
+
+  // const getUsdtAllowance = async (callback) => {
+  //   // USDT 合约 ABI 未定义
+  // }
+
+  // const handleUsdtApprove = (parentAddress) => {
+  //   // 暂时禁用
+  // }
 
   const handleRegistered = async (status) => {
     if (!amount) return Toast.show(t('Please enter an amount'))
-    if (new Big(amount).lt('200') || new Big(amount).gt('1000')) return Toast.show(`${t('Staking amount per order')}200～1000USDT`)
+    if (new Big(amount).lt(minAmount) || new Big(amount).gt('1000')) return Toast.show(`${t('Staking amount per order')}${minAmount}～1000USDT`)
     if (!isRegistered) {
       let dialog = Dialog.show({
         header: null,
@@ -128,27 +147,28 @@ const Staking = (props) => {
   }
 
   const handleStaking = async (status, parentAddress) => {
-    setLoading(true)
-    const approve = status || usdtApprove
-    if (!approve) return handleUsdtApprove(parentAddress)
-    const amountNum = new Big(amount).times('1e18').toFixed(0)
-    try {
-      if (parentAddress) {
-        await ETH.stakeWithInviter(amountNum, '0', active, parentAddress)
-        setIsRegistered(true)
-      } else {
-        await ETH.stake(amountNum, '0', active)
-      }
-
-      setAmount('')
-      setLoading(false)
-      setIsRegistered(true)
-      Toast.show(t('Transaction successful'))
-    } catch (error) {
-      console.log(error)
-      setLoading(false)
-      Toast.show(t('Transaction failed'))
-    }
+    // TODO: ETH.stake / ETH.stakeWithInviter 方法已移除，需要重新实现
+    Toast.show(t('Staking temporarily unavailable'))
+    // setLoading(true)
+    // const approve = status || usdtApprove
+    // if (!approve) return handleUsdtApprove(parentAddress)
+    // const amountNum = new Big(amount).times('1e18').toFixed(0)
+    // try {
+    //   if (parentAddress) {
+    //     await ETH.stakeWithInviter(amountNum, '0', active, parentAddress)
+    //     setIsRegistered(true)
+    //   } else {
+    //     await ETH.stake(amountNum, '0', active)
+    //   }
+    //   setAmount('')
+    //   setLoading(false)
+    //   setIsRegistered(true)
+    //   Toast.show(t('Transaction successful'))
+    // } catch (error) {
+    //   console.log(error)
+    //   setLoading(false)
+    //   Toast.show(t('Transaction failed'))
+    // }
   }
 
   const handleSelectMax = () => {
@@ -182,7 +202,7 @@ const Staking = (props) => {
         <div className="staking-amount">
           <div className="staking-amount-title">
             <span>理财金额（USDT）</span>
-            <span className="staking-amount-hint">最低 200 USDT</span>
+            <span className="staking-amount-hint">最低 {minAmount} USDT</span>
           </div>
           <div className="staking-amount-form" style={{marginBottom: 20}}>
             <input type="number" value={amount} onChange={e => {
@@ -203,12 +223,12 @@ const Staking = (props) => {
           <div className="profit-treasure-title">盈利宝</div>
           <div className="profit-treasure-content">
             <div className="profit-treasure-item">
-              <div className="profit-treasure-label">总额度</div>
-              <div className="profit-treasure-value">9,000 USDT</div>
+              <div className="profit-treasure-label">剩余额度</div>
+              <div className="profit-treasure-value">{capLeftTotal} USDT</div>
             </div>
             <div className="profit-treasure-item">
               <div className="profit-treasure-label">可领取奖励</div>
-              <div className="profit-treasure-value">8,000 USDT</div>
+              <div className="profit-treasure-value">{lineClaimableTotal} USDT</div>
             </div>
             <Button className="profit-treasure-btn">一键领取</Button>
           </div>

@@ -10,6 +10,7 @@ const instance = axios.create({
 
 // 请求拦截
 instance.interceptors.request.use((config) => {
+    console.log('📤 HTTP 请求发出:', config.url, config.method)
     const token = localStorage.getItem("token");
     if (token) {
         config.headers['Authorization'] = `Bearer ${token}`;

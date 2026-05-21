@@ -31,6 +31,16 @@ function App() {
     console.log(ETH.account)
     const savedAccount = localStorage.getItem('account')
     
+    // 先连接钱包，确保 signer 存在
+    if (!ETH.signer) {
+      try {
+        await ETH.getAccount()
+      } catch (error) {
+        console.log('钱包未连接:', error)
+        return
+      }
+    }
+    
     if (ETH.account && ETH.account !== savedAccount) {
       return
     }

@@ -32,9 +32,12 @@ const JoinTeamForm = (props) => {
 }
 
 const Community = (props) => {
-  const [perf, setPerf] = useState('0')
+  const [basePerf, setBasePerf] = useState('0')
   const [level, setLevel] = useState('0')
   const [teamCount, setTeamCount] = useState('0')
+  const [teamU, setTeamU] = useState('0') // 可领取奖励
+  const [teamNeedCap, setTeamNeedCap] = useState('0') // 需补足金额
+  const [needAmount, setNeedAmount] = useState('0') // 需补足金额（计算公式结果）
   const [teamList, setTeamList] = useState([])
   const [baseStakedAmount, setBaseStakedAmount] = useState('0')
   const [isRegistered, setIsRegistered] = useState(false)
@@ -43,8 +46,8 @@ const Community = (props) => {
   const { t } = props
 
   useEffect(() => {
-    getGlobalView()
     getChildrenPage()
+    getUserView() // 获取 userView 数据
   }, [])
 
   const getChildrenPage = async () => {
@@ -53,17 +56,77 @@ const Community = (props) => {
     setTeamList(childrenPage)
   }
 
-  const getGlobalView = async () => {
-    const globalView = await ETH.getGlobalView()
-
-    const { perf, level, teamCount, isRegistered, parent, baseStakedAmount } = globalView
-
-    setBaseStakedAmount(baseStakedAmount)
-    setTeamCount(teamCount)
-    setParent(parent)
-    setIsRegistered(isRegistered)
-    setLevel(level === '-1' ? '0' : level)
-    setPerf(perf)
+  const getUserView = async () => {
+    try {
+      // 先连接钱包，确保 signer 存在
+      if (!ETH.signer) {
+        await ETH.getAccount()
+      }
+      
+      const userData = await ETH.userView()
+      console.log('✅ community.jsx 获取到 userView 数据:', userData)
+      
+      if (userData) {
+        // 从 userView 获取所有字段
+        if (userData.basePerf) {
+          const basePerfValue = ETH.formatUnits(userData.basePerf, 18)
+          console.log('basePerf:', basePerfValue)
+          setBasePerf(basePerfValue)
+        }
+        if (userData.level !== undefined) {
+          const levelValue = userData.level.toString() === '-1' ? '0' : userData.level.toString()
+          console.log('level:', levelValue)
+          setLevel(levelValue)
+        }
+        if (userData.parent) {
+          setParent(userData.parent)
+        }
+        if (userData.teamClaimed) {
+          const teamClaimed = ETH.formatUnits(userData.teamClaimed, 18)
+          console.log('teamClaimed:', teamClaimed)
+          setTeamCount(teamClaimed)
+        }
+        if (userData.teamU) {
+          const teamUValue = ETH.formatUnits(userData.teamU, 18)
+          console.log('teamU:', teamUValue)
+          setTeamU(teamUValue)
+        }
+        if (userData.teamNeedCap) {
+          const teamNeedCapValue = ETH.formatUnits(userData.teamNeedCap, 18)
+          console.log('teamNeedCap:', teamNeedCapValue)
+          setTeamNeedCap(teamNeedCapValue)
+        }
+        if (userData.bound !== undefined) {
+          setIsRegistered(userData.bound)
+        }
+        if (userData.baseStake) {
+          const baseStake = ETH.formatUnits(userData.baseStake, 18)
+          setBaseStakedAmount(baseStake)
+        }
+      }
+      
+      // 获取 plans 计算需补足金额
+      try {
+        const plans = await ETH.plans()
+        console.log('✅ 获取到 plans 数据:', plans)
+        if (plans && plans.length > 0 && plans[0].outAmount && plans[0].maxAmount) {
+          const outAmount = Number(ETH.formatUnits(plans[0].outAmount, 18))
+          const maxAmount = Number(ETH.formatUnits(plans[0].maxAmount, 18))
+          const teamNeedCapValue = Number(teamNeedCap)
+          
+          // 计算公式：teamNeedCap/(outAmount/maxAmount)
+          if (outAmount > 0 && maxAmount > 0) {
+            const need = teamNeedCapValue / (outAmount / maxAmount)
+            console.log('需补足金额计算:', teamNeedCapValue, '/', '(', outAmount, '/', maxAmount, ')', '=', need)
+            setNeedAmount(need.toFixed(0))
+          }
+        }
+      } catch (plansError) {
+        console.error('❌ 获取 plans 失败:', plansError)
+      }
+    } catch (error) {
+      console.error('❌ 获取 userView 失败:', error)
+    }
   }
 
   const handleJoinTeam = () => {
@@ -124,7 +187,7 @@ const Community = (props) => {
           </div>
           <div className="community-info-item">
             <h3>{t('Team Performance')}</h3>
-            <p>{perf} US$</p>
+            <p>{basePerf} US$</p>
           </div>
           <div className="community-info-item">
             <h3>已领取团队奖励</h3>
@@ -136,12 +199,12 @@ const Community = (props) => {
           <div className="reward-content">
             <div className="reward-item">
               <span className="reward-label">可领取奖励</span>
-              <span className="reward-value">7,000 USDT</span>
+              <span className="reward-value">{teamU} USDT</span>
               <button className="reward-buy-btn">一键领取</button>
             </div>
             <div className="reward-item highlight">
               <span className="reward-label">需补足金额</span>
-              <span className="reward-value">3,000 USDT</span>
+              <span className="reward-value">{needAmount} USDT</span>
               <button className="reward-buy-btn">一键购买额度</button>
             </div>
             <div className="reward-notice">

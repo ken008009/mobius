@@ -80,36 +80,6 @@ export class ETH {
         return new Big(formatted).toFixed(fixed);
     };
 
-    static async getISPSBalance() {
-        const contract = new ethers.Contract(import.meta.env.VITE_ISPS, abi.ERC20, ETH.signer); // 创建合约对象
-        const balance = await contract.balanceOf(ETH.account);
-        return ethers.utils.formatUnits(balance, 'ether');
-    }
-
-    static async getUSDTBalance() {
-        const contract = new ethers.Contract(import.meta.env.VITE_USDT, abi.USDT, ETH.signer); // 创建合约对象
-
-        try {
-            // 调用balanceOf函数来获取USDT余额
-            const balance = await contract.balanceOf(ETH.account);
-            return ethers.utils.formatUnits(balance, 'ether');
-        } catch (error) {
-            console.error(`${t('Error fetching USDT balance')}:`, error);
-            return 0;
-        }
-    }
-    static async getTOKENBalance() {
-        const contract = new ethers.Contract(import.meta.env.VITE_DB, abi.DB, ETH.signer); // 创建合约对象
-        try {
-            // 调用balanceOf函数来获取USDT余额
-            const balance = await contract.balanceOf('0x000000000000000000000000000000000000dEaD');
-            return ethers.utils.formatUnits(balance, 'ether');
-        } catch (error) {
-            console.error(`${t('Error fetching token balance')}:`, error);
-            return 0;
-        }
-    }
-
     static async getUserOverview(address = ETH.account) {
         const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer); // 创建合约对象
         console.log('contract', contract)
@@ -123,84 +93,15 @@ export class ETH {
         return res
     }
 
-    static async register(address) {
-        const contract = new ethers.Contract(import.meta.env.VITE_TEAM, abi.TEAM, ETH.signer); // 创建合约对象
-
-        return contract.register(address)
-    }
-
-    static async getGlobalOverview() {
-        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer); // 创建合约对象
-
-        return contract.globalOverview()
-    }
-
-    static async getChildrenPage(address = ETH.account) {
-        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer); // 创建合约对象
-        const userSummary = await contract.getUserSummary(ETH.account)
-
-        return contract.getChildrenPage(address, '0', userSummary.directChildrenCount)
-    }
-
-    static async kongTouPreviewClaim(address = ETH.account) {
-        const contract = new ethers.Contract(import.meta.env.VITE_KT, abi.KT, ETH.signer); // 创建合约对象
-        console.log(contract, address)
-        return contract.previewClaim(address)
-    }
-
-    static async kongTouClaim() {
-        const contract = new ethers.Contract(import.meta.env.VITE_KT, abi.KT, ETH.signer); // 创建合约对象
-        console.log(contract)
-        return contract.claim()
-    }
-
-    static async claimableOf(address = ETH.account) {
-        const contract = new ethers.Contract(import.meta.env.VITE_FH, abi.FH, ETH.signer);
-
-        return this.formatToken(await contract.claimableOf(address))
-    }
-
     static async getUserQueueInfo(address = ETH.account) { 
         const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer);
 
         return contract.getUserQueueInfo(address)
     };
 
-    static async getGlobalView() {
+    static async getUserOrders(address = ETH.account, page = '0', pageSize = '10') {
         const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer); // 创建合约对象
-        const globalView = await contract.getGlobalView()
-        const pair = await contract.pair()
-        const userSummary = await contract.getUserSummary(ETH.account)
-        console.log('pair', pair, globalView.priceA.toString())
-        return {
-            priceA: this.formatToken(globalView.priceA.toString()),
-            reserveUCurrent: this.formatToken(globalView.reserveUCurrent.toString()),
-            perf: this.formatToken(userSummary.perf.toString()) - this.formatToken(userSummary.extraTeamPerf.toString()),
-            level: userSummary.level.toString(),
-            isRegistered: userSummary.isRegistered,
-            baseStakedAmount: this.formatToken(userSummary.baseStakedAmount.toString()),
-            teamCount: this.formatToken(userSummary.perfSon.toString()),
-            maxStakeAmountNow: this.formatToken(globalView.maxStakeAmountNow.toString()),
-            originMaxStakeAmountNow: globalView.maxStakeAmountNow.toString(),
-            dividend: this.formatToken(globalView.dividendUsdtBalance.toString()) / globalView.dividendActiveUsers.toString(),
-            queueLength: globalView.queueLength.toString(),
-            queueCursor: globalView.queueCursor.toString(),
-            parent: userSummary.parent,
-            stakeOrderCount: userSummary.stakeOrderCount.toString(),
-            canUnstakeCount: userSummary.canUnstakeCount.toString(),
-            canRestakeCount: userSummary.canRestakeCount.toString(),
-            claimableOrderCount: userSummary.claimableOrderCount.toString(),
-            nextUnlockTime: userSummary.nextUnlockTime.toString(),
-            nextTtlDeadline: userSummary.nextTtlDeadline.toString(),
-            circuitBreakerTime: globalView.circuitBreakerTime.toString(),
-        }
-    }
-
-    static async getUserOrders(address = ETH.account) {
-        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer); // 创建合约对象
-        const userSummary = await contract.getUserSummary(ETH.account)
-        // console.log('userSummary', userSummary.stakeOrderCount.toString())
-        return contract.getUserOrders(address, '0', userSummary.stakeOrderCount.toString())
+        return contract.getUserOrders(address, page, pageSize)
     }
 
     static async getStakeQueuePage(page, pageSize) {
@@ -215,135 +116,14 @@ export class ETH {
         return contract.myStakesPage(ETH.account, page, pageSize)
     }
 
-    static async stake(...params) {
-        const contract = new ethers.Contract(import.meta.env.VITE_ZY, abi.ZY, ETH.signer);
-
-        return contract.stake(...params)
-    }
-    static async batchStake(...params) {
-        const contract = new ethers.Contract(import.meta.env.VITE_ZY, abi.ZY, ETH.signer);
-
-        return contract.batchStake(...params)
+    static async plans() {
+        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer);
+        return contract.plans()
     }
 
-    static async stakeWithInviter(...params) {
-        const contract = new ethers.Contract(import.meta.env.VITE_ZY, abi.ZY, ETH.signer);
-
-        return contract.stakeWithInviter(...params)
-    }
-
-
-    static async batchStakeWithInviter(...params) {
-        const contract = new ethers.Contract(import.meta.env.VITE_ZY, abi.ZY, ETH.signer);
-
-        return contract.batchStakeWithInviter(...params)
-    }
-
-    static async stakeToken(...params) {
-        const contract = new ethers.Contract(import.meta.env.VITE_ZY, abi.ZY, ETH.signer);
-
-//         const userUsed = await contract.userDepositUsed(ETH.account);
-//         const userCap = await contract.postStartUserCap();
-// console.log("已用额度:", userUsed.toString());
-// console.log("用户上限:", userCap.toString());
-        // try {
-        //     await contract.callStatic.stakeToken(...params);
-        // } catch (err) {
-        //     console.log(err.error?.data || err);
-        // }
-        console.log('stakeToken', params)
-
-        return contract.stakeToken(...params)
-    }
-    // 解押
-    static async unstake(index) {
-        const contract = new ethers.Contract(import.meta.env.VITE_ZY, abi.ZY, ETH.signer);
-
-        return contract.unstake(index)
-    }
-    // 复投
-    static async restake(...params) {
-        const contract = new ethers.Contract(import.meta.env.VITE_ZY, abi.ZY, ETH.signer);
-
-        return contract.restake(...params)
-    }
-
-    static async batchUnstake(index) {
-        const contract = new ethers.Contract(import.meta.env.VITE_ZY, abi.ZY, ETH.signer);
-
-        return contract.batchUnstake(index)
-    }
-
-    static async batchRestake(...params) {
-        const contract = new ethers.Contract(import.meta.env.VITE_ZY, abi.ZY, ETH.signer);
-
-        return contract.batchRestake(...params)
-    }
-
-    static async batchClaim(...params) {
-        const contract = new ethers.Contract(import.meta.env.VITE_ZY, abi.ZY, ETH.signer);
-
-        return contract.batchClaim(...params)
-    }
-
-    // 提取收益
-    static async claim(index) {
-        const contract = new ethers.Contract(import.meta.env.VITE_ZY, abi.ZY, ETH.signer);
-
-        return contract.claim(index)
-    }
-
-    static async cancelQueuedStake(index) {
-        console.log('index', index)
-        const contract = new ethers.Contract(import.meta.env.VITE_ZY, abi.ZY, ETH.signer);
-
-        return contract.cancelQueuedStake(index)
-    }
-
-    static async stakeQueuePage(index) {
-        const contract = new ethers.Contract(import.meta.env.VITE_ZY, abi.ZY, ETH.signer);
-
-        return contract.stakeQueuePage(index)
-    }
-
-    static async setAutoCompound(index, state) {
-        const contract = new ethers.Contract(import.meta.env.VITE_ZY, abi.ZY, ETH.signer);
-
-        return contract.setAutoCompound(index, state)
-    }
-
-    static async getKSDTBalance() {
-        const contract = new ethers.Contract(import.meta.env.VITE_KSDT, abi.ERC20, ETH.signer); // 创建合约对象
-        const balance = await contract.balanceOf(ETH.account);
-        return ethers.utils.formatUnits(balance, 'ether');
-    }
-
-    static async processGlobalNodeDividendWindow(...params) {
-        const contract = new ethers.Contract(import.meta.env.VITE_FH, abi.FH, ETH.signer);
-
-        contract.processGlobalNodeDividendWindow(...params)
-    }
-
-    static async subscribe(...params) {
-        try {
-            const contract = new ethers.Contract(import.meta.env.VITE_FH, abi.FH, ETH.signer);
-
-            contract.subscribe(...params)
-        } catch (error) {
-            console.log('error', error)
-        }
-    }
-
-    static async getUsdtValueFromIsps(amount) {
-        try {
-            const contract = new ethers.Contract(import.meta.env.VITE_CONTRACT, abi.ISPS, ETH.signer); // 创建合约对象
-            const path = [import.meta.env.VITE_ISPS, import.meta.env.VITE_USDT];
-            const amountsOut = await contract.getAmountsOut(ethers.utils.parseEther(amount), path);
-            return ethers.utils.formatUnits(amountsOut[1].toString(), 'ether');
-        } catch (error) {
-            console.log(error);
-            return Promise.reject(error);
-        }
+    static async userView(address = ETH.account) {
+        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer);
+        return contract.userView(address)
     }
 
     // 签名
@@ -387,26 +167,6 @@ export class ETH {
     static format_address(v, n = 8) {
         const reg = new RegExp(`^(.{${n}})(.*)(.{${n}})$`, "ig"); // 创建正则表达式，用于格式化地址
         return v.replace(reg, "$1...$3"); // 格式化钱包地址
-    }
-    static dbContract() {
-        const contract = new ethers.Contract(import.meta.env.VITE_DB, abi.DB, ETH.signer);
-        return contract
-    }
-    static teamContract() {
-        const contract = new ethers.Contract(import.meta.env.VITE_TEAM, abi.TEAM, ETH.signer);
-        return contract
-    }
-    static fhContract() {
-        const contract = new ethers.Contract(import.meta.env.VITE_FH, abi.FH, ETH.signer);
-        return contract
-    }
-    static ktContract() {
-        const contract = new ethers.Contract(import.meta.env.VITE_KT, abi.KT, ETH.signer);
-        return contract
-    }
-    static zysqContract() {
-        const contract = new ethers.Contract(import.meta.env.VITE_ZYSQ, abi.ZYSQ, ETH.signer);
-        return contract
     }
 }
 
