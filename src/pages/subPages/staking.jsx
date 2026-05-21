@@ -222,15 +222,24 @@ const Staking = (props) => {
             <span className="staking-amount-hint">最低 {minAmount} USDT</span>
           </div>
           <div className="staking-amount-form" style={{marginBottom: 20}}>
-            <input type="number" value={amount} onChange={e => {
-              const maxAmount = new Big(maxStakeAmountNow).toString()
+            <input 
+              type="number" 
+              value={amount} 
+              onChange={e => {
+                // 只允许数字和小数点
+                let val = e.target.value.replace(/[^0-9.]/g, '')
+                
+                // 防止多个小数点
+                const parts = val.split('.')
+                if (parts.length > 2) {
+                  val = parts[0] + '.' + parts.slice(1).join('')
+                }
 
-              if (Number(e.target.value) > Number(maxAmount)) {
-                return setAmount(maxAmount)
-              }
-
-              setAmount(e.target.value)
-            }} placeholder="请输入理财金额" className="amount-input" />
+                setAmount(val)
+              }} 
+              placeholder="请输入理财金额" 
+              className="amount-input" 
+            />
           </div>
         </div>
         <Button loading={loading} className="staking-btn" onClick={() => handleRegistered()}>开始理财</Button>
