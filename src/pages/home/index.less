@@ -268,15 +268,20 @@
     }
   }
   .about-list {
-    padding: 10px 25px;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    margin-top: 20px;
+    gap: 16px;
+    margin-top: 16px;
     .about-list-item {
+      margin: 0 20px;
+      width: calc(100% - 40px);
+      box-sizing: border-box;
       padding: 32px;
-      background: rgb(24, 29, 33);
-      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(23, 251, 163, 0.12) 0%, rgba(23, 251, 163, 0.05) 50%, rgba(24, 29, 33, 1) 100%);
+      border: 1px solid rgba(23, 251, 163, 0.3);
+      border-radius: 48px;
+      box-shadow: 0 4px 20px rgba(23, 251, 163, 0.1);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -285,12 +290,15 @@
       p {
         color: #FFF;
         font-family: 'Proxima Nova:Regular';
-        font-size: 14px;
+        font-size: 15px;
+        line-height: 1.6;
         text-align: center;
+        margin: 0;
         &:nth-child(3) {
           font-size: 18px;
           font-family: 'Proxima Nova:Bold';
           color: #15FAA3;
+          margin-top: 4px;
         }
       }
     }
