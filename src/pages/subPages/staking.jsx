@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import { useLocation } from 'react-router-dom'
 import { ClockCircleOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { Button, Input, Dialog, Toast, Tag } from 'antd-mobile'
 import classnames from 'classnames'
@@ -6,6 +7,7 @@ import dayjs from 'dayjs'
 import { Contract, ETH } from '@tools/contract'
 import Big from 'big.js';
 import FireVideo from '@components/FireVideo'
+import { showJoinTeamDialog } from '@components/JoinTeamDialog'
 import './styles/staking.less'
 
 // const USDT = new Contract(import.meta.env.VITE_USDT, "ERC20"); // TODO: ABI 未定义
@@ -37,6 +39,7 @@ const AddressForm = (props) => {
 }
 
 const Staking = (props) => {
+  const location = useLocation()
   const [active, setActive] = useState('0')
   const [amount, setAmount] = useState('')
   const [orders, setOrders] = useState([])
@@ -56,20 +59,43 @@ const Staking = (props) => {
   const [orderCount, setOrderCount] = useState(0) // 订单数量（用于 claimLineAll）
 
   const { t } = props
+  
+  // 从路由状态中获取 needAmount（从 community 页面传递过来）
+  const routeNeedAmount = location.state?.needAmount
 
   useEffect(() => {
     getPlansMinAmount() // 获取最小理财金额
     getUserCapLeftTotal() // 获取剩余额度
     getUserOrders() // 获取订单列表
+    checkUserRegistered() // 检查用户是否已绑定
     window.Big = Big
     
     // 检查是否有从 community 页面传递过来的需补足金额
-    const stateNeedAmount = props.match?.state?.needAmount
-    if (stateNeedAmount) {
-      console.log('📥 从社区页面接收到需补足金额:', stateNeedAmount)
+    if (routeNeedAmount) {
+      console.log('📥 从社区页面接收到需补足金额:', routeNeedAmount)
       // 回填金额会在 getPlansMinAmount 完成后处理
     }
   }, [])
+
+  const checkUserRegistered = async () => {
+    try {
+      if (!ETH.signer) {
+        await ETH.getAccount()
+      }
+      
+      const userData = await ETH.userView()
+      if (userData) {
+        // 优先使用 bound 字段
+        if (userData.bound !== undefined) {
+          setIsRegistered(userData.bound)
+        } else if (userData.parent && userData.parent !== '0x0000000000000000000000000000000000000000') {
+          setIsRegistered(true)
+        }
+      }
+    } catch (error) {
+      console.error('检查用户绑定状态失败:', error)
+    }
+  }
 
   const getUserOrders = async () => {
     try {
@@ -167,9 +193,8 @@ const Staking = (props) => {
         console.log('✅ minAmount 状态已更新为:', minValue)
         
         // 检查是否有从 community 页面传递的 needAmount，回填到输入框
-        const stateNeedAmount = props.match?.state?.needAmount
-        if (stateNeedAmount !== undefined && stateNeedAmount !== null) {
-          const needVal = Number(stateNeedAmount)
+        if (routeNeedAmount !== undefined && routeNeedAmount !== null) {
+          const needVal = Number(routeNeedAmount)
           const minVal = Number(minValue)
           // 如果 needAmount < minAmount，使用 minAmount，否则使用 needAmount
           const fillAmount = needVal < minVal ? minVal : needVal
@@ -224,6 +249,19 @@ const Staking = (props) => {
 
   // 新的理财方法：调用合约 stake(amount, plan)
   const handleStake = async () => {
+    // 检查是否已绑定上级
+    if (!isRegistered) {
+      showJoinTeamDialog({
+        t,
+        onSuccess: (address) => {
+          console.log('绑定成功，上级地址:', address)
+          setIsRegistered(true)
+          Toast.show('绑定成功！现在可以开始理财了')
+        }
+      })
+      return
+    }
+
     // 校验输入
     if (!amount) return Toast.show(t('Please enter an amount'))
     if (new Big(amount).lt(minAmount)) return Toast.show(`最低理财金额为 ${minAmount} USDT`)

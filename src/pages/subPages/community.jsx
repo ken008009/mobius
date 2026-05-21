@@ -3,33 +3,8 @@ import CommunityBanner from '@images/m/community-banner.png'
 import { Contract, ETH } from '@tools/contract'
 import { Input, Button, Dialog, Toast } from 'antd-mobile'
 import { X } from 'lucide-react'
+import { showJoinTeamDialog } from '@components/JoinTeamDialog'
 import './styles/community.less'
-
-const JoinTeamForm = (props) => {
-  const [address, setAddress] = useState('')
-
-  return (
-    <>
-      <div className="address-form">
-        <X className="close-btn" onClick={() => props.onChange && props.onChange()} />
-        <p className="address-title">Input Team Address</p>
-        <Input className="address-input" placeholder="Enter team address" onChange={(value) => {
-          setAddress(value)
-        }} />
-        <p><Button className="address-btn" onClick={() => {
-          if (!address) {
-            Toast.show({
-              content: t('Please enter the Team address')
-            })
-            return
-          }
-
-          props.onChange && props.onChange(address)
-        }}>JOIN</Button></p>
-      </div>
-    </>
-  )
-}
 
 const Community = (props) => {
   const [basePerf, setBasePerf] = useState('0')
@@ -196,39 +171,14 @@ const Community = (props) => {
   }
 
   const handleJoinTeam = () => {
-    let dialog = Dialog.show({
-      header: null,
-      title: null,
-      content: <JoinTeamForm onChange={async (value) => {
-        if (value) {
-          try {
-            const toast = Toast.show({
-              icon: 'loading',
-              maskClickable: false,
-              content: t('Joining...'),
-            })
-            // 调用 userContract 的 bind 方法绑定上级
-            await ETH.bind(value)
-            setParent(value)
-            setIsRegistered(true)
-            toast.close()
-            Toast.show({
-              icon: 'success',
-              content: t('Operation Success'),
-            })
-          } catch (error) {
-            console.log(error)
-            Toast.show({
-              icon: 'fail',
-              content: t('Operation Failed'),
-            })
-            return
-          }
-        }
-        dialog.close()
-      }} />,
-      actions: [],
-      className: 'no-footer-dialog'
+    showJoinTeamDialog({
+      t,
+      onSuccess: (address) => {
+        setParent(address)
+        setIsRegistered(true)
+        // 刷新用户数据
+        getUserView()
+      }
     })
   }
 

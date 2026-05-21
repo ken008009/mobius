@@ -12,12 +12,14 @@ import { ETH } from '@tools/contract'
 import classnames from 'classnames'
 import NoticeScroll from './components/noticeScroll'
 import FireVideo from '@components/FireVideo'
+import { showJoinTeamDialog } from '@components/JoinTeamDialog'
 import './index.less'
 
 const Home = (props) => {
   const [tab, setTab] = useState(1)
   const [priceA, setPriceA] = useState(0)
   const [balance, setBalance] = useState('0.0')
+  const [isRegistered, setIsRegistered] = useState(false)
   const { state, dispatch } = useContext(StoreContext)
 
   const { t } = props
@@ -28,6 +30,7 @@ const Home = (props) => {
     // 检查钱包是否已连接，避免刷新后 signer 为 null 导致报错
     if (ETH.signer) {
       getGlobalView()
+      checkUserRegistered()
     }
   }, [])
 
@@ -47,6 +50,47 @@ const Home = (props) => {
     } catch (error) {
       console.error('getGlobalView error:', error)
     }
+  }
+
+  const checkUserRegistered = async () => {
+    try {
+      if (!ETH.signer) {
+        await ETH.getAccount()
+      }
+      
+      const userData = await ETH.userView()
+      if (userData) {
+        // 优先使用 bound 字段
+        if (userData.bound !== undefined) {
+          setIsRegistered(userData.bound)
+        } else if (userData.parent && userData.parent !== '0x0000000000000000000000000000000000000000') {
+          setIsRegistered(true)
+        }
+      }
+    } catch (error) {
+      console.error('检查用户绑定状态失败:', error)
+    }
+  }
+
+  const handleGoStaking = async (e) => {
+    e.preventDefault()
+    
+    // 检查是否已绑定上级
+    if (!isRegistered) {
+      showJoinTeamDialog({
+        t,
+        onSuccess: (address) => {
+          console.log('绑定成功，上级地址:', address)
+          setIsRegistered(true)
+          // 绑定成功后跳转到理财页面
+          props.navigate('/staking')
+        }
+      })
+      return
+    }
+    
+    // 已绑定，直接跳转
+    props.navigate('/staking')
   }
 
   const nextSwitch = () => {
@@ -80,10 +124,7 @@ const Home = (props) => {
 
         <FireVideo />
 
-        <a href="#" className="go-staking-btn" onClick={e => {
-            e.preventDefault()
-            props.navigate('/staking')
-          }}>
+        <a href="#" className="go-staking-btn" onClick={handleGoStaking}>
             <div className="go-staking-btn-text">开始理财</div>
         </a>
 
