@@ -137,10 +137,6 @@ const Community = (props) => {
         if (userData.parent) {
           setParent(userData.parent)
         }
-        // 如果已绑定，自动设置 isRegistered 为 true
-        if (userData.parent && userData.parent !== '0x0000000000000000000000000000000000000000') {
-          setIsRegistered(true)
-        }
         if (userData.teamClaimed) {
           const teamClaimed = ETH.formatUnits(userData.teamClaimed, 18)
           console.log('teamClaimed:', teamClaimed)
@@ -156,38 +152,43 @@ const Community = (props) => {
           console.log('levelRewardTotal:', levelRewardTotalValue)
           setLevelRewardTotal(levelRewardTotalValue)
         }
+        let parsedTeamNeedCap = '0'
         if (userData.teamNeedCap) {
-          const teamNeedCapValue = ETH.formatUnits(userData.teamNeedCap, 18)
-          console.log('teamNeedCap:', teamNeedCapValue)
-          setTeamNeedCap(teamNeedCapValue)
+          parsedTeamNeedCap = ETH.formatUnits(userData.teamNeedCap, 18)
+          console.log('teamNeedCap:', parsedTeamNeedCap)
+          setTeamNeedCap(parsedTeamNeedCap)
         }
+        // 优先使用合约的 bound 字段判断是否已绑定
         if (userData.bound !== undefined) {
           setIsRegistered(userData.bound)
+        } else if (userData.parent && userData.parent !== '0x0000000000000000000000000000000000000000') {
+          // 如果 bound 字段不存在，则通过 parent 地址判断
+          setIsRegistered(true)
         }
         if (userData.baseStake) {
           const baseStake = ETH.formatUnits(userData.baseStake, 18)
           setBaseStakedAmount(baseStake)
         }
-      }
       
-      // 获取 plans 计算需补足金额
-      try {
-        const plans = await ETH.plans()
-        console.log('✅ 获取到 plans 数据:', plans)
-        if (plans && plans.length > 0 && plans[0].outAmount && plans[0].maxAmount) {
-          const outAmount = Number(ETH.formatUnits(plans[0].outAmount, 18))
-          const maxAmount = Number(ETH.formatUnits(plans[0].maxAmount, 18))
-          const teamNeedCapValue = Number(teamNeedCap)
-          
-          // 计算公式：teamNeedCap/(outAmount/maxAmount)
-          if (outAmount > 0 && maxAmount > 0) {
-            const need = teamNeedCapValue / (outAmount / maxAmount)
-            console.log('需补足金额计算:', teamNeedCapValue, '/', '(', outAmount, '/', maxAmount, ')', '=', need)
-            setNeedAmount(need.toFixed(0))
+        // 获取 plans 计算需补足金额
+        try {
+          const plans = await ETH.plans()
+          console.log('✅ 获取到 plans 数据:', plans)
+          if (plans && plans.length > 0 && plans[0].outAmount && plans[0].maxAmount) {
+            const outAmount = Number(ETH.formatUnits(plans[0].outAmount, 18))
+            const maxAmount = Number(ETH.formatUnits(plans[0].maxAmount, 18))
+            const teamNeedCapValue = Number(parsedTeamNeedCap)
+            
+            // 计算公式：teamNeedCap/(outAmount/maxAmount)
+            if (outAmount > 0 && maxAmount > 0) {
+              const need = teamNeedCapValue / (outAmount / maxAmount)
+              console.log('需补足金额计算:', teamNeedCapValue, '/', '(', outAmount, '/', maxAmount, ')', '=', need)
+              setNeedAmount(need.toFixed(0))
+            }
           }
+        } catch (plansError) {
+          console.error('❌ 获取 plans 失败:', plansError)
         }
-      } catch (plansError) {
-        console.error('❌ 获取 plans 失败:', plansError)
       }
     } catch (error) {
       console.error('❌ 获取 userView 失败:', error)
