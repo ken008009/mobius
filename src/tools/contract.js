@@ -140,6 +140,21 @@ export class ETH {
         return contract.children(address, page, pageSize)
     }
 
+    // 获取全局视图数据
+    static async getGlobalView() {
+        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi, ETH.signer);
+        return contract.globalView()
+    }
+
+    // 获取黑洞代币余额
+    static async getTOKENBalance() {
+        const stakeContract = new ethers.Contract(import.meta.env.VITE_BUY, stakeAbi, ETH.signer);
+        const deadAddress = await stakeContract.DEAD();
+        const tokenContract = new ethers.Contract(import.meta.env.VITE_ISPS, ["function balanceOf(address) view returns (uint256)"], ETH.signer);
+        const balance = await tokenContract.balanceOf(deadAddress);
+        return ETH.formatToken(balance, 18, 4);
+    }
+
     // 绑定上级：调用 userContract 的 bind(address) 方法
     static async bind(parentAddress) {
         const contract = new ethers.Contract(import.meta.env.VITE_TEAM, userAbi, ETH.signer);

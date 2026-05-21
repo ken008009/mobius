@@ -239,6 +239,7 @@ const Staking = (props) => {
       // 检查 USDT 授权额度
       const allowance = await ETH.checkUsdtAllowance()
       const amountWei = ETH.parseUnits(amount, 18)
+      console.log('amountWei', amountWei, 'allowance', allowance)
       
       // 如果授权额度不足，先授权
       if (allowance.lt(amountWei)) {
