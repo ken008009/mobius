@@ -28,30 +28,16 @@ function App() {
   }
 
   const getUserOverview = async () => {
-    console.log(ETH.account)
-    const savedAccount = localStorage.getItem('account')
-    
-    // 先连接钱包，确保 signer 存在
-    if (!ETH.signer) {
-      try {
-        await ETH.getAccount()
-      } catch (error) {
-        console.log('钱包未连接:', error)
-        return
-      }
-    }
-    
-    if (ETH.account && ETH.account !== savedAccount) {
-      return
-    }
-
-    if (ETH.account) {
+    // 如果 signer 存在说明钱包已连接（由 main.jsx 的 initWallet 处理）
+    if (ETH.signer && ETH.account) {
       dispatch({
         type: 'SET_DATA',
         payload: {
           address: ETH.account
         }
       })
+      // 保存钱包地址到本地，用于下次自动重连
+      localStorage.setItem('account', ETH.account)
     }
   }
 

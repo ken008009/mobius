@@ -37,36 +37,64 @@ const Hls = (props) => {
   ]
 
   useEffect(() => {
-    getUserOrders()
-    getGlobalView()
-    getUsdtAllowance()
+    // 检查钱包是否已连接，避免刷新后 signer 为 null 导致报错
+    if (ETH.signer) {
+      getUserOrders()
+      getGlobalView()
+      getUsdtAllowance()
+    }
   }, [])
 
   const getGlobalView = async () => {
-    const globalView = await ETH.getGlobalView()
+    try {
+      if (!ETH.signer) return
+      
+      const globalView = await ETH.getGlobalView()
 
-    const { baseStakedAmount, stakeOrderCount, canUnstakeCount, canRestakeCount, claimableOrderCount, nextUnlockTime, nextTtlDeadline, circuitBreakerTime } = globalView
+      const { baseStakedAmount, stakeOrderCount, canUnstakeCount, canRestakeCount, claimableOrderCount, nextUnlockTime, nextTtlDeadline, circuitBreakerTime } = globalView
 
-    setInfoList({
-      baseStakedAmount, stakeOrderCount, canUnstakeCount, canRestakeCount, claimableOrderCount, nextUnlockTime, nextTtlDeadline, circuitBreakerTime
-    })
+      setInfoList({
+        baseStakedAmount: baseStakedAmount?.toString?.() || baseStakedAmount,
+        stakeOrderCount: stakeOrderCount?.toString?.() || stakeOrderCount,
+        canUnstakeCount: canUnstakeCount?.toString?.() || canUnstakeCount,
+        canRestakeCount: canRestakeCount?.toString?.() || canRestakeCount,
+        claimableOrderCount: claimableOrderCount?.toString?.() || claimableOrderCount,
+        nextUnlockTime: nextUnlockTime?.toString?.() || nextUnlockTime,
+        nextTtlDeadline: nextTtlDeadline?.toString?.() || nextTtlDeadline,
+        circuitBreakerTime: circuitBreakerTime?.toString?.() || circuitBreakerTime,
+      })
+    } catch (error) {
+      console.error('getGlobalView error:', error)
+    }
   }
 
   const getUsdtAllowance = async (callback) => {
-    let res = await USDT.call("allowance", [ETH.account, BUY.address]);
+    try {
+      if (!ETH.signer) return
+      
+      let res = await USDT.call("allowance", [ETH.account, BUY.address]);
 
-    setUsdtApprove(Number(res) > 0)
+      setUsdtApprove(Number(res) > 0)
 
-    callback && callback(Number(res) > 0)
+      callback && callback(Number(res) > 0)
+    } catch (error) {
+      console.error('getUsdtAllowance error:', error)
+    }
   }
 
   const getUserOrders = async () => {
-    const userOrders = await ETH.getUserOrders()
-    userOrders.forEach(item => {
-      console.log(item.ttlDeadline)
-    })
+    try {
+      if (!ETH.signer) return
+      
+      const userOrders = await ETH.getUserOrders()
+      userOrders.forEach(item => {
+        console.log(item.ttlDeadline)
+      })
 
-    setUserOrders(userOrders)
+      setUserOrders(userOrders)
+    } catch (error) {
+      console.error('getUserOrders error:', error)
+    }
   }
 
   const handleUsdtApprove = (callback) => {

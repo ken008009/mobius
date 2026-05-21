@@ -18,8 +18,11 @@ const Nodes = (props) => {
   const { t } = props
 
   useEffect(() => {
-    getData()
-    getUsdtAllowance()
+    // 检查钱包是否已连接，避免刷新后 signer 为 null 导致报错
+    if (ETH.signer) {
+      getData()
+      getUsdtAllowance()
+    }
   }, [])
 
   const handleUsdtApprove = (callback) => {
@@ -32,26 +35,38 @@ const Nodes = (props) => {
   }
 
   const getUsdtAllowance = async (callback) => {
-    let res = await USDT.call("allowance", [ETH.account, BUY.address]);
+    try {
+      if (!ETH.signer) return
+      
+      let res = await USDT.call("allowance", [ETH.account, BUY.address]);
 
-    setUsdtApprove(Number(res) > 0)
+      setUsdtApprove(Number(res) > 0)
 
-    if (Number(res) > 0) callback && callback(Number(res) > 0)
+      if (Number(res) > 0) callback && callback(Number(res) > 0)
+    } catch (error) {
+      console.error('getUsdtAllowance error:', error)
+    }
   }
 
   const getData = async () => {
-    let airdrop = null
-    const globalView = await ETH.getGlobalView()
-    const claimableOf = await ETH.claimableOf()
     try {
-      const previewClaim = await ETH.kongTouPreviewClaim()
-      airdrop = previewClaim[previewClaim.length - 1].toString()
-    } catch (error) {
-      airdrop = 0
-    }
+      if (!ETH.signer) return
+      
+      let airdrop = null
+      const globalView = await ETH.getGlobalView()
+      const claimableOf = await ETH.claimableOf()
+      try {
+        const previewClaim = await ETH.kongTouPreviewClaim()
+        airdrop = previewClaim[previewClaim.length - 1].toString()
+      } catch (error) {
+        airdrop = 0
+      }
 
-    setAirdrop(airdrop)
-    setDividend(claimableOf)
+      setAirdrop(airdrop)
+      setDividend(claimableOf?.toString?.() || claimableOf)
+    } catch (error) {
+      console.error('getData error:', error)
+    }
   }
 
   const handleZhiYa = async () => {

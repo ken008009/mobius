@@ -25,17 +25,28 @@ const Home = (props) => {
   // console.log('state', state)
 
   useEffect(() => {
-    getGlobalView()
+    // 检查钱包是否已连接，避免刷新后 signer 为 null 导致报错
+    if (ETH.signer) {
+      getGlobalView()
+    }
   }, [])
 
   const getGlobalView = async () => {
-    const globalView = await ETH.getGlobalView()
-    const balance = await ETH.getTOKENBalance()
+    try {
+      // 确保钱包已连接
+      if (!ETH.signer) return
+      
+      const globalView = await ETH.getGlobalView()
+      const balance = await ETH.getTOKENBalance()
 
-    const { priceA } = globalView
+      const { priceA } = globalView
 
-    setPriceA(priceA)
-    setBalance(balance)
+      // 格式化 BigNumber 为字符串，避免 React error #31
+      setPriceA(ETH.formatToken(priceA, 18, 4))
+      setBalance(balance)
+    } catch (error) {
+      console.error('getGlobalView error:', error)
+    }
   }
 
   const nextSwitch = () => {

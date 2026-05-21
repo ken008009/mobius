@@ -100,6 +100,19 @@ const Header = (props) => {
 
   const handleCreateLink = async () => {
     try {
+      // 如果钱包未连接，先连接钱包
+      if (!ETH.signer || !ETH.account) {
+        Toast.show({
+          icon: 'loading',
+          content: t('Connecting wallet...'),
+          duration: 0,
+        })
+        
+        await ETH.getAccount()
+        Toast.clear()
+      }
+
+      // 连接成功后保存地址并更新状态
       localStorage.setItem('account', ETH.account)
 
       dispatch({
@@ -109,9 +122,28 @@ const Header = (props) => {
         }
       })
 
+      // Toast.show({
+      //   icon: 'success',
+      //   content: t('Wallet connected successfully'),
+      // })
+
       // setShow(true)
     } catch (error) {
-      console.log(error)
+      Toast.clear()
+      console.error('handleCreateLink error:', error)
+      
+      // 用户拒绝连接或其他错误
+      if (error.code === 4001) {
+        Toast.show({
+          icon: 'fail',
+          content: t('User rejected the request'),
+        })
+      } else {
+        Toast.show({
+          icon: 'fail',
+          content: error.message || t('Failed to connect wallet'),
+        })
+      }
     }
   }
 
