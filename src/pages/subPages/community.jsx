@@ -36,6 +36,7 @@ const Community = (props) => {
   const [level, setLevel] = useState('0')
   const [teamCount, setTeamCount] = useState('0')
   const [teamU, setTeamU] = useState('0') // 可领取奖励
+  const [levelRewardTotal, setLevelRewardTotal] = useState('0') // 手续费分红
   const [teamNeedCap, setTeamNeedCap] = useState('0') // 需补足金额
   const [needAmount, setNeedAmount] = useState('0') // 需补足金额（计算公式结果）
   const [childrenList, setChildrenList] = useState([]) // 团队用户列表（来自合约 children()）
@@ -149,6 +150,11 @@ const Community = (props) => {
           const teamUValue = ETH.formatUnits(userData.teamU, 18)
           console.log('teamU:', teamUValue)
           setTeamU(teamUValue)
+        }
+        if (userData.levelRewardTotal) {
+          const levelRewardTotalValue = ETH.formatUnits(userData.levelRewardTotal, 18)
+          console.log('levelRewardTotal:', levelRewardTotalValue)
+          setLevelRewardTotal(levelRewardTotalValue)
         }
         if (userData.teamNeedCap) {
           const teamNeedCapValue = ETH.formatUnits(userData.teamNeedCap, 18)
@@ -267,7 +273,16 @@ const Community = (props) => {
             <div className="reward-item highlight">
               <span className="reward-label">需补足金额</span>
               <span className="reward-value">{needAmount} USDT</span>
-              <button className="reward-buy-btn">一键购买额度</button>
+              <button className="reward-buy-btn" onClick={() => {
+                // 需补足金额大于0时才跳转
+                const amount = Number(needAmount)
+                if (amount <= 0) {
+                  Toast.show('暂无需要补足的金额')
+                  return
+                }
+                // 跳转到理财页面，传递需补足金额
+                props.navigate('/staking', { state: { needAmount: amount } })
+              }}>一键购买额度</button>
             </div>
             <div className="reward-notice">
               <span>⏰ 7天内领取，否则奖励不再计算</span>
@@ -281,7 +296,7 @@ const Community = (props) => {
           <div className="reward-content">
             <div className="reward-item">
               <span className="reward-label">手续费分红</span>
-              <span className="reward-value">80 USDT</span>
+              <span className="reward-value">{levelRewardTotal} USDT</span>
             </div>
           </div>
         </div>

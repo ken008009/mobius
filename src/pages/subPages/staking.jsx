@@ -62,6 +62,13 @@ const Staking = (props) => {
     getUserCapLeftTotal() // 获取剩余额度
     getUserOrders() // 获取订单列表
     window.Big = Big
+    
+    // 检查是否有从 community 页面传递过来的需补足金额
+    const stateNeedAmount = props.match?.state?.needAmount
+    if (stateNeedAmount) {
+      console.log('📥 从社区页面接收到需补足金额:', stateNeedAmount)
+      // 回填金额会在 getPlansMinAmount 完成后处理
+    }
   }, [])
 
   const getUserOrders = async () => {
@@ -155,8 +162,20 @@ const Staking = (props) => {
         const min = ETH.formatUnits(plans[0].minAmount, 18)
         console.log('转换后的 minAmount:', min)
         
-        setMinAmount(Number(min).toFixed(0))
-        console.log('✅ minAmount 状态已更新为:', Number(min).toFixed(0))
+        const minValue = Number(min).toFixed(0)
+        setMinAmount(minValue)
+        console.log('✅ minAmount 状态已更新为:', minValue)
+        
+        // 检查是否有从 community 页面传递的 needAmount，回填到输入框
+        const stateNeedAmount = props.match?.state?.needAmount
+        if (stateNeedAmount !== undefined && stateNeedAmount !== null) {
+          const needVal = Number(stateNeedAmount)
+          const minVal = Number(minValue)
+          // 如果 needAmount < minAmount，使用 minAmount，否则使用 needAmount
+          const fillAmount = needVal < minVal ? minVal : needVal
+          setAmount(fillAmount.toString())
+          console.log('📤 回填金额到输入框:', fillAmount, '(needAmount:', needVal, ', minAmount:', minVal, ')')
+        }
       } else {
         console.warn('⚠️ plans 返回空数组，使用默认值 0')
       }

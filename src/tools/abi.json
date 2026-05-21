@@ -1,6 +1,5 @@
-{
-	"VIEW": [
-		{
+[
+	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -620,6 +619,11 @@
 						"type": "uint256"
 					},
 					{
+						"internalType": "uint256",
+						"name": "levelRewardTotal",
+						"type": "uint256"
+					},
+					{
 						"internalType": "uint40",
 						"name": "teamClearAt",
 						"type": "uint40"
@@ -663,5 +667,4 @@
 		"stateMutability": "view",
 		"type": "function"
 	}
-	]
-}
+]

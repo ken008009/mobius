@@ -115,28 +115,28 @@ export class ETH {
     }
 
     static async getMyStakesPage(page, pageSize) {
-        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer); // 创建合约对象
+        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi, ETH.signer); // 创建合约对象
         console.log(ETH.account, page, pageSize)
         return contract.myStakesPage(ETH.account, page, pageSize)
     }
 
     static async plans() {
-        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer);
+        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi, ETH.signer);
         return contract.plans()
     }
 
     static async userView(address = ETH.account) {
-        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer);
+        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi, ETH.signer);
         return contract.userView(address)
     }
 
     static async orders(address = ETH.account, page = 0, pageSize = 10) {
-        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer);
+        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi, ETH.signer);
         return contract.orders(address, page, pageSize)
     }
 
     static async children(address = ETH.account, page = 0, pageSize = 20) {
-        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer);
+        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi, ETH.signer);
         return contract.children(address, page, pageSize)
     }
 
