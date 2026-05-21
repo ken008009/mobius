@@ -3,6 +3,8 @@ import detectEthereumProvider from '@metamask/detect-provider'; // 用于检测�
 import { ethers } from "ethers"; // 导入 ethers 库中的 ethers 和 BigNumber 对象
 import { Toast } from 'antd-mobile'
 import abi from "./abi.json"; // 导入智能合约 ABI
+import stakeAbi from "./stake.json"; // 导入 STAKE 合约 ABI
+import userAbi from "./userContract.json"; // 导入 USER 合约 ABI
 import { fetchNonce } from '@services/api'
 import Big from 'big.js';
 import i18next from '../i18n';
@@ -11,6 +13,8 @@ const { t } = i18next;
 
 const usdtAbi = [
     "function balanceOf(address owner) view returns (uint256)",
+    "function approve(address spender, uint256 amount) returns (bool)",
+    "function allowance(address owner, address spender) view returns (uint256)",
 ];
 
 /* 链接钱包类 */
@@ -134,6 +138,46 @@ export class ETH {
     static async children(address = ETH.account, page = 0, pageSize = 20) {
         const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer);
         return contract.children(address, page, pageSize)
+    }
+
+    // 绑定上级：调用 userContract 的 bind(address) 方法
+    static async bind(parentAddress) {
+        const contract = new ethers.Contract(import.meta.env.VITE_TEAM, userAbi, ETH.signer);
+        return contract.bind(parentAddress)
+    }
+
+    // 质押：调用 stake(amount, plan) 合约方法
+    static async stake(amount, plan = 0) {
+        const contract = new ethers.Contract(import.meta.env.VITE_BUY, stakeAbi, ETH.signer);
+        // amount 需要转换为 wei 单位
+        const amountWei = ETH.parseUnits(amount, 18);
+        return contract.stake(amountWei, plan)
+    }
+
+    // 一键领取所有奖励：调用 claimLineAll(maxOrders)
+    static async claimLineAll(maxOrders) {
+        const contract = new ethers.Contract(import.meta.env.VITE_BUY, stakeAbi, ETH.signer);
+        return contract.claimLineAll(maxOrders)
+    }
+
+    // 领取团队奖励：调用 claimTeam(amount)
+    static async claimTeam(amount) {
+        const contract = new ethers.Contract(import.meta.env.VITE_BUY, stakeAbi, ETH.signer);
+        const amountWei = ETH.parseUnits(amount, 18);
+        return contract.claimTeam(amountWei)
+    }
+
+    // 检查 USDT 授权额度
+    static async checkUsdtAllowance(spender = import.meta.env.VITE_BUY) {
+        const usdtContract = new ethers.Contract(import.meta.env.VITE_USDT, usdtAbi, ETH.signer);
+        const allowance = await usdtContract.allowance(ETH.account, spender);
+        return allowance;
+    }
+
+    // 授权 USDT
+    static async approveUsdt(spender = import.meta.env.VITE_BUY, amount = '1000000000000000000000000') {
+        const usdtContract = new ethers.Contract(import.meta.env.VITE_USDT, usdtAbi, ETH.signer);
+        return usdtContract.approve(spender, amount);
     }
 
     // 签名

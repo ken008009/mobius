@@ -42,6 +42,7 @@ const Community = (props) => {
   const [baseStakedAmount, setBaseStakedAmount] = useState('0')
   const [isRegistered, setIsRegistered] = useState(false)
   const [parent, setParent] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const { t } = props
 
@@ -74,6 +75,42 @@ const Community = (props) => {
     }
   }
 
+  // 领取团队奖励
+  const handleClaimTeam = async () => {
+    try {
+      setLoading(true)
+      
+      // 确保钱包已连接
+      if (!ETH.signer) {
+        await ETH.getAccount()
+      }
+      
+      // 检查可领取金额
+      if (!teamU || Number(teamU) <= 0) {
+        Toast.show('暂无团队奖励可领取')
+        return
+      }
+      
+      console.log('📡 调用 claimTeam，参数:', { amount: teamU })
+      
+      const result = await ETH.claimTeam(teamU)
+      console.log('✅ claimTeam 成功:', result)
+      
+      Toast.show('领取成功！')
+      
+      // 更新 teamU 为 0
+      setTeamU('0')
+      
+      // 刷新用户数据
+      getUserView()
+    } catch (error) {
+      console.error('❌ claimTeam 失败:', error)
+      Toast.show(error.message || '领取失败，请重试')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const getUserView = async () => {
     try {
       // 先连接钱包，确保 signer 存在
@@ -98,6 +135,10 @@ const Community = (props) => {
         }
         if (userData.parent) {
           setParent(userData.parent)
+        }
+        // 如果已绑定，自动设置 isRegistered 为 true
+        if (userData.parent && userData.parent !== '0x0000000000000000000000000000000000000000') {
+          setIsRegistered(true)
         }
         if (userData.teamClaimed) {
           const teamClaimed = ETH.formatUnits(userData.teamClaimed, 18)
@@ -159,7 +200,8 @@ const Community = (props) => {
               maskClickable: false,
               content: t('Joining...'),
             })
-            await ETH.register(value)
+            // 调用 userContract 的 bind 方法绑定上级
+            await ETH.bind(value)
             setParent(value)
             setIsRegistered(true)
             toast.close()
@@ -190,10 +232,10 @@ const Community = (props) => {
         {
           !isRegistered && <button className="join-team-btn" onClick={() => handleJoinTeam()}>{t('Join Team')}</button>
         }
-        <div className="community-info">
+        <div className="community-info full-width">
           {
             isRegistered && (
-              <div className="community-info-item">
+              <div className="community-info-item full-width">
                 <h3>{t('My Top')}</h3>
                 <p>{props.formatAddress(parent)}</p>
               </div>
@@ -218,7 +260,9 @@ const Community = (props) => {
             <div className="reward-item">
               <span className="reward-label">可领取奖励</span>
               <span className="reward-value">{teamU} USDT</span>
-              <button className="reward-buy-btn">一键领取</button>
+              <button className="reward-buy-btn" onClick={handleClaimTeam} disabled={loading || Number(teamU) <= 0}>
+                {loading ? '领取中...' : '一键领取'}
+              </button>
             </div>
             <div className="reward-item highlight">
               <span className="reward-label">需补足金额</span>
@@ -229,7 +273,6 @@ const Community = (props) => {
               <span>⏰ 7天内领取，否则奖励不再计算</span>
             </div>
           </div>
-          {/* <button className="reward-buy-btn">一键购买额度</button> */}
         </div>
 
 

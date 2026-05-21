@@ -53,6 +53,7 @@ const Staking = (props) => {
   const [minAmount, setMinAmount] = useState(0) // 默认 0，从合约获取后更新
   const [capLeftTotal, setCapLeftTotal] = useState(0) // 剩余额度
   const [lineClaimableTotal, setLineClaimableTotal] = useState(0) // 可领取奖励
+  const [orderCount, setOrderCount] = useState(0) // 订单数量（用于 claimLineAll）
 
   const { t } = props
 
@@ -79,6 +80,40 @@ const Staking = (props) => {
     }
   }
 
+  // 一键领取所有奖励
+  const handleClaimAll = async () => {
+    try {
+      setLoading(true)
+      
+      // 确保钱包已连接
+      if (!ETH.signer) {
+        await ETH.getAccount()
+      }
+      
+      // 使用 userView.orderCount 作为参数
+      if (orderCount === 0) {
+        Toast.show('暂无订单可领取')
+        return
+      }
+      
+      console.log('📡 调用 claimLineAll，参数:', { orderCount })
+      
+      const result = await ETH.claimLineAll(orderCount)
+      console.log('✅ claimLineAll 成功:', result)
+      
+      Toast.show('领取成功！')
+      
+      // 刷新订单列表和额度
+      getUserOrders()
+      getUserCapLeftTotal()
+    } catch (error) {
+      console.error('❌ claimLineAll 失败:', error)
+      Toast.show(error.message || '领取失败，请重试')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const getUserCapLeftTotal = async () => {
     try {
       const userData = await ETH.userView()
@@ -94,6 +129,11 @@ const Staking = (props) => {
           const claimable = ETH.formatUnits(userData.lineClaimableTotal, 18)
           console.log('可领取奖励:', claimable)
           setLineClaimableTotal(Number(claimable))
+        }
+        if (userData.orderCount !== undefined) {
+          const count = Number(userData.orderCount)
+          console.log('订单数量:', count)
+          setOrderCount(count)
         }
       }
     } catch (error) {
@@ -163,9 +203,60 @@ const Staking = (props) => {
     }
   }
 
+  // 新的理财方法：调用合约 stake(amount, plan)
+  const handleStake = async () => {
+    // 校验输入
+    if (!amount) return Toast.show(t('Please enter an amount'))
+    if (new Big(amount).lt(minAmount)) return Toast.show(`最低理财金额为 ${minAmount} USDT`)
+    
+    try {
+      setLoading(true)
+      
+      // 确保钱包已连接
+      if (!ETH.signer) {
+        await ETH.getAccount()
+      }
+      
+      // 检查 USDT 授权额度
+      const allowance = await ETH.checkUsdtAllowance()
+      const amountWei = ETH.parseUnits(amount, 18)
+      
+      // 如果授权额度不足，先授权
+      if (allowance.lt(amountWei)) {
+        console.log('🔐 USDT 授权额度不足，正在授权...')
+        Toast.show('USDT 授权中...')
+        const approveTx = await ETH.approveUsdt()
+        await approveTx.wait()
+        console.log('✅ USDT 授权成功')
+      }
+      
+      console.log('📡 调用 stake，参数：', { amount, plan: 0 })
+      
+      // 调用合约 stake 方法，plan 默认为 0
+      const result = await ETH.stake(amount, 0)
+      
+      console.log('✅ stake 成功:', result)
+      Toast.show('理财成功！')
+      
+      // 清空输入框
+      setAmount('')
+      
+      // 刷新所有页面数据
+      getUserOrders()      // 刷新订单列表
+      getUserCapLeftTotal() // 刷新剩余额度
+      getPlansMinAmount()   // 刷新理财计划数据
+      
+    } catch (error) {
+      console.error('❌ stake 失败:', error)
+      Toast.show(error.message || '理财失败，请重试')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleStaking = async (status, parentAddress) => {
-    // TODO: ETH.stake / ETH.stakeWithInviter 方法已移除，需要重新实现
-    Toast.show(t('Staking temporarily unavailable'))
+    // 旧的理财方法已弃用，使用新的 handleStake
+    Toast.show(t('请使用新的理财按钮'))
     // setLoading(true)
     // const approve = status || usdtApprove
     // if (!approve) return handleUsdtApprove(parentAddress)
@@ -242,7 +333,7 @@ const Staking = (props) => {
             />
           </div>
         </div>
-        <Button loading={loading} className="staking-btn" onClick={() => handleRegistered()}>开始理财</Button>
+        <Button loading={loading} className="staking-btn" onClick={() => handleStake()}>开始理财</Button>
 
 
         <div className="profit-treasure">
@@ -256,7 +347,7 @@ const Staking = (props) => {
               <div className="profit-treasure-label">可领取奖励</div>
               <div className="profit-treasure-value">{lineClaimableTotal} USDT</div>
             </div>
-            <Button className="profit-treasure-btn">一键领取</Button>
+            <Button className="profit-treasure-btn" onClick={handleClaimAll} loading={loading}>一键领取</Button>
           </div>
         </div>
        
@@ -280,20 +371,21 @@ const Staking = (props) => {
                   // 格式化字段
                   const capNow = item.capNow ? Number(ETH.formatUnits(item.capNow, 18)) : 0
                   const used = item.used ? Number(ETH.formatUnits(item.used, 18)) : 0
+                  const linePaid = item.linePaid ? Number(ETH.formatUnits(item.linePaid, 18)) : 0
                   const daysCount = item.daysCount ? Number(item.daysCount) : 0
                   
                   // 计算每日释放 = capNow / daysCount
                   const dailyRelease = daysCount > 0 ? (capNow / daysCount) : 0
                   
-                  // 计算剩余天数 = (capNow - used) / (capNow / daysCount)
-                  const remainingDays = dailyRelease > 0 ? ((capNow - used) / dailyRelease) : 0
+                  // 计算剩余天数 = (capNow - linePaid) / (capNow / daysCount)
+                  const remainingDays = dailyRelease > 0 ? ((capNow - linePaid) / dailyRelease) : 0
                   
                   return (
                     <div className="staking-table-row" key={index}>
                       <div className="staking-table-cell col-index">{index + 1}</div>
                       <div className="staking-table-cell col-amount">{capNow.toFixed(2)}</div>
                       <div className="staking-table-cell col-daily">{dailyRelease.toFixed(2)}</div>
-                      <div className="staking-table-cell col-days">{remainingDays.toFixed(1)}天</div>
+                      <div className="staking-table-cell col-days">{remainingDays.toFixed(0)}天</div>
                       <div className="staking-table-cell col-used">{used.toFixed(2)}</div>
                     </div>
                   )
