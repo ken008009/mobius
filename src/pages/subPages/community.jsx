@@ -133,13 +133,9 @@ const Community = (props) => {
         </div>
 
         <div className="community-reward">
-          <div className="reward-header">
-            <h3 className="reward-title">今日奖励</h3>
-            <p className="reward-amount">{teamCount} US$</p>
-          </div>
           <div className="reward-content">
             <div className="reward-item">
-              <span className="reward-label">所需盈利宝额度</span>
+              <span className="reward-label">可领取奖励</span>
               <span className="reward-value">7,000 USDT</span>
               <button className="reward-buy-btn">一键领取</button>
             </div>
@@ -156,20 +152,13 @@ const Community = (props) => {
         </div>
 
 
-        {/* 手续费分红。已领取总额U 待领取金额U  一键领取 */}
-        <div className="community-list">
-          <div className="community-list-title">手续费分红</div>
-
-          <div className="fee-reward-content">
-            <div className="fee-reward-item">
-              <div className="fee-reward-label">已领取总额</div>
-              <div className="fee-reward-value">1000 USDT</div>
+        {/* 手续费分红 */}
+        <div className="community-reward">
+          <div className="reward-content">
+            <div className="reward-item">
+              <span className="reward-label">手续费分红</span>
+              <span className="reward-value">80 USDT</span>
             </div>
-            <div className="fee-reward-item">
-              <div className="fee-reward-label">待领取金额</div>
-              <div className="fee-reward-value">500 USDT</div>
-            </div>
-            <button className="reward-buy-btn">一键领取</button>
           </div>
         </div>
 

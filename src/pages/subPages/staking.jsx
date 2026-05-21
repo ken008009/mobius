@@ -207,14 +207,14 @@ const Staking = (props) => {
               <div className="profit-treasure-value">9,000 USDT</div>
             </div>
             <div className="profit-treasure-item">
-              <div className="profit-treasure-label">可领取额度</div>
+              <div className="profit-treasure-label">可领取奖励</div>
               <div className="profit-treasure-value">8,000 USDT</div>
             </div>
-            <button className="profit-treasure-btn">一键领取</button>
+            <Button className="profit-treasure-btn">一键领取</Button>
           </div>
         </div>
        
-       {/* 订单  额度 每日释放额度   剩余天数   已领取额度 */}
+       {/* 订单  额度  每日释放额度  剩余天数  已领取额度 */}
         <div className="staking-log">
           <div className="staking-log-title">订单记录</div>
           <div className="staking-log-list">

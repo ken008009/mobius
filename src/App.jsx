@@ -29,16 +29,20 @@ function App() {
 
   const getUserOverview = async () => {
     console.log(ETH.account)
-    if (ETH.account !== localStorage.getItem('address')) {
+    const savedAccount = localStorage.getItem('account')
+    
+    if (ETH.account && ETH.account !== savedAccount) {
       return
     }
 
-    dispatch({
-      type: 'SET_DATA',
-      payload: {
-        address: ETH.account
-      }
-    })
+    if (ETH.account) {
+      dispatch({
+        type: 'SET_DATA',
+        payload: {
+          address: ETH.account
+        }
+      })
+    }
   }
 
   const getGlobalOverview = async () => {

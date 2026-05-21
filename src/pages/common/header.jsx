@@ -100,7 +100,7 @@ const Header = (props) => {
 
   const handleCreateLink = async () => {
     try {
-      localStorage.setItem('address', ETH.account)
+      localStorage.setItem('account', ETH.account)
 
       dispatch({
         type: 'SET_DATA',

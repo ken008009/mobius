@@ -2,7 +2,7 @@ export const SET_DATA = 'SET_DATA';
 export const RESET = 'RESET';
 
 export const initialState = {
-  address: ''
+  address: localStorage.getItem('account') || ''
 };
 
 export function reducer(state, action) {
