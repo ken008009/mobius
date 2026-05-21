@@ -59,8 +59,25 @@ const Staking = (props) => {
   useEffect(() => {
     getPlansMinAmount() // 获取最小理财金额
     getUserCapLeftTotal() // 获取剩余额度
+    getUserOrders() // 获取订单列表
     window.Big = Big
   }, [])
+
+  const getUserOrders = async () => {
+    try {
+      // 先连接钱包，确保 signer 存在
+      if (!ETH.signer) {
+        await ETH.getAccount()
+      }
+      
+      console.log('📡 正在调用 ETH.orders()...')
+      const orders = await ETH.orders()
+      console.log('✅ 获取到 orders 数据:', orders)
+      setOrders(orders || [])
+    } catch (error) {
+      console.error('❌ 获取 orders 失败:', error)
+    }
+  }
 
   const getUserCapLeftTotal = async () => {
     try {
@@ -237,34 +254,43 @@ const Staking = (props) => {
        {/* 订单  额度  每日释放额度  剩余天数  已领取额度 */}
         <div className="staking-log">
           <div className="staking-log-title">订单记录</div>
-          <div className="staking-log-list">
-            {orders.length === 0 && <div className="no-data">{t('No pending orders')}</div>}
-            {
-              orders.map((item, index) => (
-                <div className="staking-log-item" key={index}>
-                  <div className="queue-row">
-                    <span className="queue-label">{t('Amount')}：</span>
-                    <span className="queue-value">{item.amount.toString()} USDT</span>
-                  </div>
-                  <div className="queue-row">
-                    <span className="queue-label">{t('Position in Queue')}：</span>
-                    <span className="queue-value">{item.index.toString()}</span>
-                  </div>
-                  <div className="queue-row">
-                    <span className="queue-label">{t('Queue Time')}：</span>
-                    <span className="queue-value">{dayjs(item.queuedAt.toString() * 1000).format('YYYY-MM-DD hh:mm:ss')}</span>
-                  </div>
-                  <div className="queue-row">
-                    <span className="queue-label">{t('Status')}：</span>
-                    <span className="queue-value">
-                      <Tag round color={!item.status ? "warning" : "success"}>
-                        {!item.status ? t('Pending') : t('Completed')}
-                      </Tag>
-                    </span>
-                  </div>
-                </div>
-              ))
-            }
+          <div className="staking-table">
+            <div className="staking-table-head">
+              <div className="staking-table-row">
+                <div className="staking-table-cell col-index">序号</div>
+                <div className="staking-table-cell col-amount">额度</div>
+                <div className="staking-table-cell col-daily">每日释放</div>
+                <div className="staking-table-cell col-days">剩余天数</div>
+                <div className="staking-table-cell col-used">已领取</div>
+              </div>
+            </div>
+            <div className="staking-table-main">
+              {orders.length === 0 && <div className="no-data">暂无订单记录</div>}
+              {
+                orders.map((item, index) => {
+                  // 格式化字段
+                  const capNow = item.capNow ? Number(ETH.formatUnits(item.capNow, 18)) : 0
+                  const used = item.used ? Number(ETH.formatUnits(item.used, 18)) : 0
+                  const daysCount = item.daysCount ? Number(item.daysCount) : 0
+                  
+                  // 计算每日释放 = capNow / daysCount
+                  const dailyRelease = daysCount > 0 ? (capNow / daysCount) : 0
+                  
+                  // 计算剩余天数 = (capNow - used) / (capNow / daysCount)
+                  const remainingDays = dailyRelease > 0 ? ((capNow - used) / dailyRelease) : 0
+                  
+                  return (
+                    <div className="staking-table-row" key={index}>
+                      <div className="staking-table-cell col-index">{index + 1}</div>
+                      <div className="staking-table-cell col-amount">{capNow.toFixed(2)}</div>
+                      <div className="staking-table-cell col-daily">{dailyRelease.toFixed(2)}</div>
+                      <div className="staking-table-cell col-days">{remainingDays.toFixed(1)}天</div>
+                      <div className="staking-table-cell col-used">{used.toFixed(2)}</div>
+                    </div>
+                  )
+                })
+              }
+            </div>
           </div>
         </div>
       </div>

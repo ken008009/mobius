@@ -38,7 +38,7 @@ const Community = (props) => {
   const [teamU, setTeamU] = useState('0') // 可领取奖励
   const [teamNeedCap, setTeamNeedCap] = useState('0') // 需补足金额
   const [needAmount, setNeedAmount] = useState('0') // 需补足金额（计算公式结果）
-  const [teamList, setTeamList] = useState([])
+  const [childrenList, setChildrenList] = useState([]) // 团队用户列表（来自合约 children()）
   const [baseStakedAmount, setBaseStakedAmount] = useState('0')
   const [isRegistered, setIsRegistered] = useState(false)
   const [parent, setParent] = useState('')
@@ -51,9 +51,27 @@ const Community = (props) => {
   }, [])
 
   const getChildrenPage = async () => {
-    const childrenPage = await ETH.getChildrenPage()
-
-    setTeamList(childrenPage)
+    try {
+      // 先连接钱包，确保 signer 存在
+      if (!ETH.signer) {
+        await ETH.getAccount()
+      }
+      
+      console.log('📡 正在调用 ETH.children()...')
+      const children = await ETH.children()
+      console.log('✅ 获取到 children 数据:', children)
+      
+      // 格式化数据：地址、金额、业绩
+      const formattedChildren = (children || []).map(item => ({
+        account: item.account,
+        baseStake: item.baseStake ? Number(ETH.formatUnits(item.baseStake, 18)).toFixed(2) : '0',
+        perf: item.perf ? Number(ETH.formatUnits(item.perf, 18)).toFixed(2) : '0'
+      }))
+      
+      setChildrenList(formattedChildren)
+    } catch (error) {
+      console.error('❌ 获取 children 失败:', error)
+    }
   }
 
   const getUserView = async () => {
@@ -243,20 +261,23 @@ const Community = (props) => {
           <div className="community-table">
             <div className="community-table-head">
               <div className="community-table-row">
-                <div className="community-table-cell">{t('Wallet Addresses')}</div>
-                <div className="community-table-cell">{t('Level')}</div>
-                <div className="community-table-cell">{t('Staking')}</div>
-                <div className="community-table-cell">{t('Performance')}</div>
+                <div className="community-table-cell col-index">序号</div>
+                <div className="community-table-cell col-address">{t('Wallet Addresses')}</div>
+                <div className="community-table-cell col-amount">金额</div>
+                <div className="community-table-cell col-perf">业绩</div>
               </div>
             </div>
             <div className="community-table-main">
               {
-                teamList.map(item => (
-                  <div className="community-table-row">
-                    <div className="community-table-cell">{props.formatAddress(item.account)}</div>
-                    <div className="community-table-cell">{item.level === -1 ? 0 : item.level}</div>
-                    <div className="community-table-cell">{ETH.formatToken(item.baseStakedAmount)}</div>
-                    <div className="community-table-cell">{ETH.formatToken(item.perf) - ETH.formatToken(item.extraTeamPerf)}</div>
+                childrenList.length === 0 && <div className="no-data">暂无团队数据</div>
+              }
+              {
+                childrenList.map((item, index) => (
+                  <div className="community-table-row" key={index}>
+                    <div className="community-table-cell col-index">{index + 1}</div>
+                    <div className="community-table-cell col-address">{props.formatAddress(item.account)}</div>
+                    <div className="community-table-cell col-amount">{item.baseStake} USDT</div>
+                    <div className="community-table-cell col-perf">{item.perf} USDT</div>
                   </div>
                 ))
               }

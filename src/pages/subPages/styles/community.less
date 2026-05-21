@@ -235,11 +235,19 @@
       margin: 0 25px 40px 25px;
       border-radius: 14px;
       overflow: hidden;
+      padding: 10px;
       .community-table-head {
         width: 100%;
       }
       .community-table-main {
         width: 100%;
+        
+        .no-data {
+          text-align: center;
+          padding: 20px 0;
+          color: rgba(255, 255, 255, 0.6);
+          font-size: 14px;
+        }
       }
       .community-table-row {
         width: 100%;
@@ -250,17 +258,27 @@
           line-height: 42px;
           text-align: center;
           border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-          &:nth-child(1) {
-            width: 34%;
+          flex-shrink: 0;
+          
+          // 序号列：固定窄宽度
+          &.col-index {
+            width: 40px;
+            min-width: 40px;
           }
-          &:nth-child(2) {
-            width: 10%;
+          // 地址列：中等宽度
+          &.col-address {
+            flex: 1.2;
+            min-width: 100px;
           }
-          &:nth-child(3) {
-            width: 28%;
+          // 金额列：固定宽度
+          &.col-amount {
+            width: 80px;
+            min-width: 80px;
           }
-          &:nth-child(4) {
-            width: 28%;
+          // 业绩列：固定宽度
+          &.col-perf {
+            width: 80px;
+            min-width: 80px;
           }
         }
       }

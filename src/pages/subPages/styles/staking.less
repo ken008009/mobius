@@ -299,11 +299,7 @@
     opacity: .6;
   }
   .staking-log {
-    margin: 0 25px;
-    margin-bottom: 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    margin: 0 25px 40px 25px;
     .staking-log-title {
       height: 32px;
       line-height: 30px;
@@ -314,45 +310,64 @@
       font-weight: bold;
       color: #fff;
       font-size: 16px;
+      margin-bottom: 10px;
     }
-    .staking-log-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      .no-data {
-        text-align: center;
-        color: #999;
-        font-size: 14px;
-        padding: 20px;
+    // 参考 community-table 样式
+    .staking-table {
+      background-color: rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      overflow: hidden;
+      padding: 10px;
+      .staking-table-head {
+        width: 100%;
       }
-      .staking-log-item {
-        display: flex;
-        justify-content: space-between;
-        flex-direction: column;
-        font-size: 14px;
-        background: rgba(255, 255, 255, 0.08);
-        padding: 12px;
-        border-radius: 16px;
-        .queue-row {
-          display: flex;
-          align-items: center;
-          padding: 8px 0;
-          border-bottom: 1px solid rgba(100, 100, 100, 0.2);
-          .queue-label {
-            width: 100px;
-            font-size: 14px;
-            color: #999;
-            font-weight: 500;
-          }
-          .queue-value {
-            flex: 1;
-            font-size: 14px;
-            color: #CCC;
-            font-weight: 500;
-          }
+      .staking-table-main {
+        width: 100%;
+        .no-data {
+          text-align: center;
+          padding: 20px 0;
+          color: rgba(255, 255, 255, 0.6);
+          font-size: 14px;
         }
-        .queue-row:last-child {
-          border-bottom: none;
+      }
+      .staking-table-row {
+        width: 100%;
+        display: flex;
+        height: 42px;
+        .staking-table-cell {
+          height: 42px;
+          line-height: 42px;
+          text-align: center;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+          flex-shrink: 0;
+          font-size: 13px;
+          color: #fff;
+          
+          // 序号列：固定窄宽度
+          &.col-index {
+            width: 40px;
+            min-width: 40px;
+          }
+          // 额度列
+          &.col-amount {
+            flex: 1;
+            min-width: 70px;
+          }
+          // 每日释放列
+          &.col-daily {
+            flex: 1;
+            min-width: 70px;
+          }
+          // 剩余天数列
+          &.col-days {
+            flex: 1;
+            min-width: 70px;
+          }
+          // 已领取列
+          &.col-used {
+            flex: 1;
+            min-width: 70px;
+          }
         }
       }
     }

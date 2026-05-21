@@ -126,6 +126,16 @@ export class ETH {
         return contract.userView(address)
     }
 
+    static async orders(address = ETH.account, page = 0, pageSize = 10) {
+        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer);
+        return contract.orders(address, page, pageSize)
+    }
+
+    static async children(address = ETH.account, page = 0, pageSize = 20) {
+        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer);
+        return contract.children(address, page, pageSize)
+    }
+
     // 签名
     static async signMessage(status = true) {
         return new Promise(async (resolve, reject) => {
