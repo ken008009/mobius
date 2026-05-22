@@ -103,11 +103,6 @@
 						"type": "uint40"
 					},
 					{
-						"internalType": "uint256",
-						"name": "launchReserveU",
-						"type": "uint256"
-					},
-					{
 						"internalType": "uint112",
 						"name": "reserveU",
 						"type": "uint112"
@@ -245,6 +240,11 @@
 				"components": [
 					{
 						"internalType": "uint256",
+						"name": "index",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
 						"name": "id",
 						"type": "uint256"
 					},
@@ -281,6 +281,16 @@
 					{
 						"internalType": "uint40",
 						"name": "start",
+						"type": "uint40"
+					},
+					{
+						"internalType": "uint40",
+						"name": "claimEffective",
+						"type": "uint40"
+					},
+					{
+						"internalType": "uint40",
+						"name": "effectiveNow",
 						"type": "uint40"
 					},
 					{
