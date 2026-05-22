@@ -177,31 +177,22 @@ const Staking = (props) => {
       
       // 解析返回结果
       let newOrders = []
-      let total = 0
       
-      if (result && Array.isArray(result.list)) {
-        newOrders = result.list || []
-        total = Number(result.total) || 0
-      } else if (Array.isArray(result)) {
-        newOrders = result || []
-        total = result.length
+      if (Array.isArray(result)) {
+        newOrders = result
       }
       
-      // 更新总条数
-      setOrdersTotal(total)
+      // 基于返回数据条数判断是否还有更多数据
+      // 只有当返回条数等于请求的 pageSize 时才可能有下一页
+      const hasMoreData = newOrders.length === pageSize
       
-      // 追加或替换数据，同时判断是否还有更多
-      // 使用函数式更新避免 React 闭包陷阱（类比 Vue 的响应式代理）
       if (isLoadMore) {
         // 触底加载：追加数据
-        setOrders(prev => {
-          const newList = [...prev, ...newOrders]
-          setHasMore(newList.length < total)
-          return newList
-        })
+        setOrders(prev => [...prev, ...newOrders])
+        setHasMore(hasMoreData)
       } else {
         // 首次加载或刷新：替换数据
-        setHasMore(newOrders.length < total)
+        setHasMore(hasMoreData)
         setOrders(newOrders)
       }
       
@@ -209,7 +200,6 @@ const Staking = (props) => {
       console.error('❌ 获取 orders 失败:', error)
       if (!isLoadMore) {
         setOrders([])
-        setOrdersTotal(0)
       }
       setHasMore(false)
     } finally {
