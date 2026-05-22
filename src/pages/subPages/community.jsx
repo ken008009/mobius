@@ -143,7 +143,7 @@ const Community = (props) => {
     try {
       setClaimLoading(true)
       
-      // 确保钱包已连接
+      // 确保钱包已连接（ETH.getAccount 有 Promise 锁，并发调用只触发一次）
       if (!ETH.signer) {
         await ETH.getAccount()
       }
@@ -244,7 +244,7 @@ const Community = (props) => {
             if (outAmount > 0 && maxAmount > 0) {
               const need = teamNeedCapValue / (outAmount / maxAmount)
               console.log('需补足金额计算:', teamNeedCapValue, '/', '(', outAmount, '/', maxAmount, ')', '=', need)
-              setNeedAmount(need.toFixed(0))
+              setNeedAmount(Math.ceil(need).toString())
             }
           }
         } catch (plansError) {
@@ -303,8 +303,8 @@ const Community = (props) => {
             <div className="reward-item">
               <span className="reward-label">{t('Claimable Reward')}</span>
               <span className="reward-value">{teamU} USDT</span>
-              <button className="reward-buy-btn" onClick={handleClaimTeam} disabled={claimLoading || Number(teamU) <= 0}>
-                {claimLoading ? t('Claiming...') : t('Claim All')}
+              <button className="reward-buy-btn" onClick={handleClaimTeam} disabled={Number(teamU) < 0}>
+                {t('Claim All')}
               </button>
             </div>
             <div className="reward-item highlight">

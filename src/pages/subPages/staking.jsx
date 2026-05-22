@@ -44,9 +44,8 @@ const Staking = (props) => {
   const [active, setActive] = useState('0')
   const [amount, setAmount] = useState('')
   const [orders, setOrders] = useState([])
-  const [ordersPage, setOrdersPage] = useState(1)      // 当前页码
-  const ordersPageSize = 10                            // 每页条数（固定）
-  const [ordersTotal, setOrdersTotal] = useState(0)    // 总条数
+  const ordersPageRef = useRef(1)                       // 当前页码（实时读取，避免闭包陷阱）
+  const ordersPageSize = 10                             // 每页条数（固定）
   const [hasMore, setHasMore] = useState(true)         // 是否还有更多数据
   const [ordersLoading, setOrdersLoading] = useState(false) // 加载中状态
   const [usdtApprove, setUsdtApprove] = useState(false)
@@ -160,41 +159,36 @@ const Staking = (props) => {
   }
 
   // 获取用户订单列表（触底加载模式）
+  // 集中处理：加载锁、数据解析、状态更新、hasMore判断
   const getUserOrders = async (page, pageSize = ordersPageSize, isLoadMore = false) => {
-    // 防止重复加载：使用 ref 实时检查（避免 setState 异步延迟问题）
     if (loadingRef.current) return
     loadingRef.current = true
     setOrdersLoading(true)
     
     try {
       console.log('📡 正在调用 ETH.getUserOrders()...', { page, pageSize, isLoadMore })
-      // 合约方法参数: (address, page, pageSize)，page 从 0 开始
       const result = await ETH.getUserOrders(ETH.account, page - 1, pageSize)
       console.log('✅ 获取到 orders 数据:', result)
       
-      // 卸载后放弃 setState
+      // 组件卸载后放弃 setState
       if (cancelledRef.current) return
       
-      // 解析返回结果
-      let newOrders = []
+      const newOrders = Array.isArray(result) ? result : []
       
-      if (Array.isArray(result)) {
-        newOrders = result
-      }
-      
-      // 基于返回数据条数判断是否还有更多数据
-      // 只有当返回条数等于请求的 pageSize 时才可能有下一页
+      // 只有当返回条数等于 pageSize 时才可能有下一页
       const hasMoreData = newOrders.length === pageSize
       
       if (isLoadMore) {
         // 触底加载：追加数据
         setOrders(prev => [...prev, ...newOrders])
-        setHasMore(hasMoreData)
       } else {
         // 首次加载或刷新：替换数据
-        setHasMore(hasMoreData)
         setOrders(newOrders)
       }
+      setHasMore(hasMoreData)
+      
+      // 同步更新页码 ref
+      ordersPageRef.current = page
       
     } catch (error) {
       console.error('❌ 获取 orders 失败:', error)
@@ -211,19 +205,13 @@ const Staking = (props) => {
   // 触底加载更多
   const loadMoreOrders = async () => {
     if (!hasMore || loadingRef.current) return
-    
-    // 使用函数式更新页码，确保获取最新值（避免 React 闭包陷阱）
-    setOrdersPage(prev => {
-      const nextPage = prev + 1
-      // 立即执行加载，不等待 setState 完成
-      getUserOrders(nextPage, ordersPageSize, true)
-      return nextPage
-    })
+    const nextPage = ordersPageRef.current + 1
+    await getUserOrders(nextPage, ordersPageSize, true)
   }
 
   // 刷新订单列表（重置到第一页）
   const refreshOrders = async () => {
-    setOrdersPage(1)
+    ordersPageRef.current = 1
     setHasMore(true)
     await getUserOrders(1, ordersPageSize, false)
   }
