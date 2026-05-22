@@ -54,10 +54,6 @@ const Home = (props) => {
 
   const checkUserRegistered = async () => {
     try {
-      if (!ETH.signer) {
-        await ETH.getAccount()
-      }
-      
       const userData = await ETH.userView()
       if (userData) {
         // 优先使用 bound 字段
@@ -125,7 +121,7 @@ const Home = (props) => {
         <FireVideo />
 
         <a href="#" className="go-staking-btn" onClick={handleGoStaking}>
-            <div className="go-staking-btn-text">开始理财</div>
+            <div className="go-staking-btn-text">{t('Start Staking')}</div>
         </a>
 
         <NoticeScroll {...props} />
@@ -165,27 +161,27 @@ const Home = (props) => {
           <div className="security-protocol-item">
             <div className="protocol-header">
               <span className="protocol-label">A</span>
-              <h3>{t('理财控进协议')}:</h3>
+              <h3>{t('Controlled Entry Protocol')}:</h3>
             </div>
-            <p>{t('每天理财订单7天后释放')}</p>
+            <p>{t('Staking orders are released after 7 days')}</p>
           </div>
 
           <div className="security-protocol-item">
             <div className="protocol-header">
               <span className="protocol-label">B</span>
-              <h3>{t('代币防暴跌协议')}:</h3>
+              <h3>{t('Token Anti-Plunge Protocol')}:</h3>
             </div>
             <ul className="protocol-list">
               <li>
-                <p>{'MS代币自由交易后价格累计下跌15%, 增加35%的滑点, 用于回购MS代币并打入黑洞'}</p>
+                <p>{t('Anti-plunge drop 15pct')}</p>
               </li>
               <li>
-                <p>{'MS代币自由交易后价格累计下跌30%, 增加50%的滑点, 用于回购MS代币并打入黑洞'}</p>
+                <p>{t('Anti-plunge drop 30pct')}</p>
               </li>
               <li>
-                <p>{'一:防暴跌启动以后13%盈利税取消'}</p>
-                <p>{'二:新订单每日提U,手续费和盈利税正常,防暴跌结束每日提币'}</p>
-                <p>{'三:动态奖励100%对冲盈利宝'}</p>
+                <p>{t('Anti-plunge rule 1')}</p>
+                <p>{t('Anti-plunge rule 2')}</p>
+                <p>{t('Anti-plunge rule 3')}</p>
               </li>
             </ul>
           </div>

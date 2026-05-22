@@ -11,7 +11,7 @@ const JoinTeamForm = (props) => {
   const handleSubmit = async () => {
     if (!address) {
       Toast.show({
-        content: t ? t('Please enter the Team address') : '请输入团队地址'
+        content: t('Please enter the Team address')
       })
       return
     }
@@ -19,7 +19,7 @@ const JoinTeamForm = (props) => {
     // 验证地址格式
     if (!await ETH.isAddress(address)) {
       Toast.show({
-        content: t ? t('Invalid address format') : '地址格式无效'
+        content: t('Invalid address format')
       })
       return
     }
@@ -29,7 +29,7 @@ const JoinTeamForm = (props) => {
       toast = Toast.show({
         icon: 'loading',
         maskClickable: false,
-        content: t ? t('Joining...') : '绑定中...',
+        content: t('Joining...'),
       })
 
       // 确保钱包已连接
@@ -43,7 +43,7 @@ const JoinTeamForm = (props) => {
       toast.close()
       Toast.show({
         icon: 'success',
-        content: t ? t('Operation Success') : '绑定成功',
+        content: t('Operation Success'),
       })
 
       // 调用成功回调
@@ -56,7 +56,7 @@ const JoinTeamForm = (props) => {
       }
       Toast.show({
         icon: 'fail',
-        content: error.message || (t ? t('Operation Failed') : '绑定失败'),
+        content: error.message || t('Operation Failed'),
       })
     }
   }
@@ -64,14 +64,14 @@ const JoinTeamForm = (props) => {
   return (
     <div className="join-team-form">
       <X className="close-btn" onClick={() => onClose && onClose()} />
-      <p className="form-title">Input Team Address</p>
+      <p className="form-title">{t('Input Team Address')}</p>
       <Input 
         className="form-input" 
-        placeholder={t ? t('Enter team address') : '请输入团队地址'} 
+        placeholder={t('Enter team address')}
         onChange={(value) => setAddress(value)} 
       />
       <Button className="form-btn" onClick={handleSubmit}>
-        {t ? t('Confirm') : '确认'}
+        {t('Confirm')}
       </Button>
     </div>
   )

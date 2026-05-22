@@ -1,17 +1,17 @@
 import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import en from '../locales/en/translation.json';
-import ar from '../locales/ar/translation.json';
-import enIN from '../locales/en-IN/translation.json';
-import enSG from '../locales/en-SG/translation.json';
-import ja from '../locales/ja/translation.json';
-import ko from '../locales/ko/translation.json';
-import ms from '../locales/ms/translation.json';
-import ru from '../locales/ru/translation.json';
-import th from '../locales/th/translation.json';
-import ur from '../locales/ur/translation.json';
-import zhCN from '../locales/zh-CN/translation.json';
-import zhHK from '../locales/zh-HK/translation.json';
+import en from '../locales/en.json';
+import ar from '../locales/ar.json';
+import enIN from '../locales/en-IN.json';
+import enSG from '../locales/en-SG.json';
+import ja from '../locales/ja.json';
+import ko from '../locales/ko.json';
+import ms from '../locales/ms.json';
+import ru from '../locales/ru.json';
+import th from '../locales/th.json';
+import ur from '../locales/ur.json';
+import zhCN from '../locales/zh-CN.json';
+import zhHK from '../locales/zh-HK.json';
 
 const savedLanguage = localStorage.getItem('language') || 'en';
 // 语言资源
