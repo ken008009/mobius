@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react'
 import CommunityBanner from '@images/m/community-banner.png'
 import { Contract, ETH } from '@tools/contract'
-import { Input, Button, Dialog, Toast } from 'antd-mobile'
+import { Input, Button, Dialog, Toast, InfiniteScroll } from 'antd-mobile'
 import { X } from 'lucide-react'
 import { showJoinTeamDialog } from '@components/JoinTeamDialog'
 import './styles/community.less'
@@ -15,6 +15,11 @@ const Community = (props) => {
   const [teamNeedCap, setTeamNeedCap] = useState('0') // 需补足金额
   const [needAmount, setNeedAmount] = useState('0') // 需补足金额（计算公式结果）
   const [childrenList, setChildrenList] = useState([]) // 团队用户列表（来自合约 children()）
+  const [childrenPage, setChildrenPage] = useState(1)      // 当前页码
+  const childrenPageSize = 10                            // 每页条数（固定）
+  const [childrenTotal, setChildrenTotal] = useState(0)    // 总条数
+  const [hasMore, setHasMore] = useState(true)             // 是否还有更多数据
+  const [childrenLoading, setChildrenLoading] = useState(false) // 加载中状态
   const [baseStakedAmount, setBaseStakedAmount] = useState('0')
   const [isRegistered, setIsRegistered] = useState(false)
   const [parent, setParent] = useState('')
@@ -27,49 +32,114 @@ const Community = (props) => {
   // 用 useRef 而非 useState，因为它不需要触发重渲染（类比 Vue 的非响应式实例字段）
   const cancelledRef = useRef(false)
 
+  // 实时加载标记：防止重复加载竞态（React setState 是异步的）
+  // 与 childrenLoading state 同步使用，但 ref 能立即读取最新值
+  const loadingRef = useRef(false)
+
   useEffect(() => {
     cancelledRef.current = false
+    loadingRef.current = false
     // 两个 RPC 请求互不依赖，并行触发可显著缩短首屏数据加载时间
-    Promise.all([getChildrenPage(), getUserView()])
+    Promise.all([getChildrenPage(1), getUserView()])
     return () => {
       cancelledRef.current = true
     }
-  }, [])
+    // 依赖 ETH.account：账户切换时重新加载数据
+  }, [ETH.account])
 
-  const getChildrenPage = async () => {
+  // 获取团队列表（触底加载模式）
+  const getChildrenPage = async (page, pageSize = childrenPageSize, isLoadMore = false) => {
+    // 防止重复加载：使用 ref 实时检查（避免 setState 异步延迟问题）
+    if (loadingRef.current) return
+    loadingRef.current = true
+    setChildrenLoading(true)
+    
     try {
       // 先连接钱包，确保 signer 存在
       if (!ETH.signer) {
         await ETH.getAccount()
       }
       
-      console.log('📡 正在调用 ETH.children()...')
-      const children = await ETH.children()
-      console.log('✅ 获取到 children 数据:', children)
+      console.log('📡 正在调用 ETH.children()...', { page, pageSize, isLoadMore })
+      // 合约方法参数: (address, page, pageSize)，page 从 0 开始
+      const result = await ETH.children(ETH.account, page - 1, pageSize)
+      console.log('✅ 获取到 children 数据:', result)
       
-      // 格式化数据：地址、金额、业绩
-      const formattedChildren = (children || []).map(item => ({
+      // 卸载后不再 setState
+      if (cancelledRef.current) return
+      
+      // 解析返回结果：可能是数组或包含列表+总数的对象
+      let newChildren = []
+      let total = 0
+      
+      if (result && Array.isArray(result.list)) {
+        newChildren = result.list || []
+        total = Number(result.total) || 0
+      } else if (Array.isArray(result)) {
+        newChildren = result || []
+        total = result.length
+      }
+      
+      // 格式化数据
+      const formattedChildren = newChildren.map(item => ({
         account: item.account,
         baseStake: item.baseStake ? Number(ETH.formatUnits(item.baseStake, 18)).toFixed(2) : '0',
         perf: item.perf ? Number(ETH.formatUnits(item.perf, 18)).toFixed(2) : '0'
       }))
       
-      // 卸载后不再 setState
-      if (cancelledRef.current) return
-      setChildrenList(formattedChildren)
+      // 更新总条数
+      setChildrenTotal(total)
+      
+      // 追加或替换数据，同时判断是否还有更多
+      // 使用函数式更新避免 React 闭包陷阱（类比 Vue 的响应式代理）
+      if (isLoadMore) {
+        // 触底加载：追加数据
+        setChildrenList(prev => {
+          const newList = [...prev, ...formattedChildren]
+          setHasMore(newList.length < total)
+          return newList
+        })
+      } else {
+        // 首次加载或刷新：替换数据
+        setHasMore(formattedChildren.length < total)
+        setChildrenList(formattedChildren)
+      }
+      
     } catch (error) {
       console.error('❌ 获取 children 失败:', error)
+      if (!isLoadMore) {
+        setChildrenList([])
+        setChildrenTotal(0)
+      }
+      setHasMore(false)
+    } finally {
+      loadingRef.current = false
+      setChildrenLoading(false)
     }
+  }
+
+  // 触底加载更多
+  const loadMoreChildren = async () => {
+    if (!hasMore || loadingRef.current) return
+    
+    // 使用函数式更新页码，确保获取最新值（避免 React 闭包陷阱）
+    setChildrenPage(prev => {
+      const nextPage = prev + 1
+      // 立即执行加载，不等待 setState 完成
+      getChildrenPage(nextPage, childrenPageSize, true)
+      return nextPage
+    })
+  }
+
+  // 刷新团队列表（重置到第一页）
+  const refreshChildren = async () => {
+    setChildrenPage(1)
+    setHasMore(true)
+    await getChildrenPage(1, childrenPageSize, false)
   }
 
   // 领取团队奖励
   const handleClaimTeam = async () => {
-    // 检查可领取金额（提前检查，避免不必要的 loading）
-    if (!teamU || Number(teamU) <= 0) {
-      Toast.show(t('No team rewards to claim'))
-      return
-    }
-    
     try {
       setClaimLoading(true)
       
@@ -294,11 +364,11 @@ const Community = (props) => {
             </div>
             <div className="community-table-main">
               {
-                childrenList.length === 0 && <div className="no-data">{t('No team data')}</div>
+                childrenList.length === 0 && !childrenLoading && <div className="no-data">{t('No team data')}</div>
               }
               {
                 childrenList.map((item, index) => (
-                  <div className="community-table-row" key={index}>
+                  <div className="community-table-row" key={`${item.account}-${index}`}>
                     <div className="community-table-cell col-index">{index + 1}</div>
                     <div className="community-table-cell col-address">{props.formatAddress(item.account)}</div>
                     <div className="community-table-cell col-amount">{item.baseStake} USDT</div>
@@ -308,6 +378,16 @@ const Community = (props) => {
               }
             </div>
           </div>
+          {/* 触底加载指示器 */}
+          <InfiniteScroll
+            loadMore={loadMoreChildren}
+            hasMore={hasMore}
+            threshold={50}
+          >
+            {childrenLoading && hasMore && (
+              <div className="loading-more">{t('Loading...')}</div>
+            )}
+          </InfiniteScroll>
         </div>
       </div>
     </>

@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react'
 import { useLocation } from 'react-router-dom'
 import { ClockCircleOutlined, InfoCircleOutlined } from '@ant-design/icons'
-import { Button, Input, Dialog, Toast, Tag } from 'antd-mobile'
+import { Button, Input, Dialog, Toast, Tag, InfiniteScroll } from 'antd-mobile'
 import classnames from 'classnames'
 import dayjs from 'dayjs'
 import { Contract, ETH } from '@tools/contract'
@@ -44,6 +44,11 @@ const Staking = (props) => {
   const [active, setActive] = useState('0')
   const [amount, setAmount] = useState('')
   const [orders, setOrders] = useState([])
+  const [ordersPage, setOrdersPage] = useState(1)      // 当前页码
+  const ordersPageSize = 10                            // 每页条数（固定）
+  const [ordersTotal, setOrdersTotal] = useState(0)    // 总条数
+  const [hasMore, setHasMore] = useState(true)         // 是否还有更多数据
+  const [ordersLoading, setOrdersLoading] = useState(false) // 加载中状态
   const [usdtApprove, setUsdtApprove] = useState(false)
   // 拆分 loading：stake 与 claim 互不干扰，避免各自按钮在另一个流程进行时错误变成 loading 状态
   const [stakeLoading, setStakeLoading] = useState(false)
@@ -74,13 +79,18 @@ const Staking = (props) => {
   // 用 useRef 而非 useState，因为它不需要触发重渲染（类比 Vue 的非响应式实例字段）
   const cancelledRef = useRef(false)
 
+  // 实时加载标记：防止重复加载竞态（React setState 是异步的）
+  // 与 ordersLoading state 同步使用，但 ref 能立即读取最新值
+  const loadingRef = useRef(false)
+
   useEffect(() => {
     cancelledRef.current = false
+    loadingRef.current = false
     // 四个 RPC 请求互不依赖，并行触发可显著缩短首屏数据加载时间
     Promise.all([
       getPlansMinAmount(),
       getUserCapLeftTotal(),
-      getUserOrders(),
+      getUserOrders(1),
       checkUserRegistered()
     ]).catch(error => {
       console.error('❌ 初始化数据加载失败:', error)
@@ -95,7 +105,8 @@ const Staking = (props) => {
     return () => {
       cancelledRef.current = true
     }
-  }, [])
+    // 依赖 ETH.account：账户切换时重新加载数据
+  }, [ETH.account])
 
   const checkUserRegistered = async () => {
     try {
@@ -123,22 +134,88 @@ const Staking = (props) => {
     }
   }
 
-  const getUserOrders = async () => {
+  // 获取用户订单列表（触底加载模式）
+  const getUserOrders = async (page, pageSize = ordersPageSize, isLoadMore = false) => {
+    // 防止重复加载：使用 ref 实时检查（避免 setState 异步延迟问题）
+    if (loadingRef.current) return
+    loadingRef.current = true
+    setOrdersLoading(true)
+    
     try {
       // 先连接钱包，确保 signer 存在
       if (!ETH.signer) {
         await ETH.getAccount()
       }
       
-      console.log('📡 正在调用 ETH.orders()...')
-      const orders = await ETH.orders()
-      console.log('✅ 获取到 orders 数据:', orders)
+      console.log('📡 正在调用 ETH.getUserOrders()...', { page, pageSize, isLoadMore })
+      // 合约方法参数: (address, page, pageSize)，page 从 0 开始
+      const result = await ETH.getUserOrders(ETH.account, page - 1, pageSize)
+      console.log('✅ 获取到 orders 数据:', result)
+      
       // 卸载后放弃 setState
       if (cancelledRef.current) return
-      setOrders(orders || [])
+      
+      // 解析返回结果
+      let newOrders = []
+      let total = 0
+      
+      if (result && Array.isArray(result.list)) {
+        newOrders = result.list || []
+        total = Number(result.total) || 0
+      } else if (Array.isArray(result)) {
+        newOrders = result || []
+        total = result.length
+      }
+      
+      // 更新总条数
+      setOrdersTotal(total)
+      
+      // 追加或替换数据，同时判断是否还有更多
+      // 使用函数式更新避免 React 闭包陷阱（类比 Vue 的响应式代理）
+      if (isLoadMore) {
+        // 触底加载：追加数据
+        setOrders(prev => {
+          const newList = [...prev, ...newOrders]
+          setHasMore(newList.length < total)
+          return newList
+        })
+      } else {
+        // 首次加载或刷新：替换数据
+        setHasMore(newOrders.length < total)
+        setOrders(newOrders)
+      }
+      
     } catch (error) {
       console.error('❌ 获取 orders 失败:', error)
+      if (!isLoadMore) {
+        setOrders([])
+        setOrdersTotal(0)
+      }
+      setHasMore(false)
+    } finally {
+      loadingRef.current = false
+      setOrdersLoading(false)
     }
+  }
+
+  // 触底加载更多
+  const loadMoreOrders = async () => {
+    if (!hasMore || loadingRef.current) return
+    
+    // 使用函数式更新页码，确保获取最新值（避免 React 闭包陷阱）
+    setOrdersPage(prev => {
+      const nextPage = prev + 1
+      // 立即执行加载，不等待 setState 完成
+      getUserOrders(nextPage, ordersPageSize, true)
+      return nextPage
+    })
+  }
+
+  // 刷新订单列表（重置到第一页）
+  const refreshOrders = async () => {
+    setOrdersPage(1)
+    setHasMore(true)
+    await getUserOrders(1, ordersPageSize, false)
   }
 
   // 一键领取所有奖励
@@ -165,7 +242,7 @@ const Staking = (props) => {
       Toast.show(t('Claim successful'))
       
       // 刷新订单列表和额度
-      await getUserOrders()
+      await refreshOrders()
       await getUserCapLeftTotal()
     } catch (error) {
       console.error('❌ claimLineAll 失败:', error)
@@ -341,10 +418,11 @@ const Staking = (props) => {
       // 清空输入框
       setAmount('')
       
-      // 刷新所有页面数据（不 await，避免按钮 loading 过久）
-      getUserOrders()      // 刷新订单列表
-      getUserCapLeftTotal() // 刷新剩余额度
-      getPlansMinAmount()   // 刷新理财计划数据
+      // 刷新订单列表（必须 await 保证数据一致性）
+      await refreshOrders()
+      // 其他数据后台刷新，不阻塞 UI
+      getUserCapLeftTotal()
+      getPlansMinAmount()
       
     } catch (error) {
       console.error('❌ stake 失败:', error)
@@ -433,48 +511,55 @@ const Staking = (props) => {
           </div>
         </div>
        
-       {/* 订单  额度  每日释放额度  剩余天数  已领取额度 */}
+       {/* 序号  剩余额度  可领额度  操作 */}
         <div className="staking-log">
           <div className="staking-log-title">{t('Order Records')}</div>
           <div className="staking-table">
             <div className="staking-table-head">
               <div className="staking-table-row">
                 <div className="staking-table-cell col-index">{t('No.')}</div>
-                <div className="staking-table-cell col-amount">{t('Cap')}</div>
+                <div className="staking-table-cell col-amount">{t('Remaining Cap')}</div>
                 <div className="staking-table-cell col-daily">{t('Daily Release')}</div>
                 <div className="staking-table-cell col-days">{t('Remaining Days')}</div>
-                <div className="staking-table-cell col-used">{t('Claimed')}</div>
               </div>
             </div>
             <div className="staking-table-main">
-              {orders.length === 0 && <div className="no-data">{t('No order records')}</div>}
+              {orders.length === 0 && !ordersLoading && <div className="no-data">{t('No order records')}</div>}
               {
                 orders.map((item, index) => {
                   // 格式化字段
                   const capNow = item.capNow ? Number(ETH.formatUnits(item.capNow, 18)) : 0
-                  const used = item.used ? Number(ETH.formatUnits(item.used, 18)) : 0
                   const linePaid = item.linePaid ? Number(ETH.formatUnits(item.linePaid, 18)) : 0
                   const daysCount = item.daysCount ? Number(item.daysCount) : 0
                   
                   // 计算每日释放 = capNow / daysCount
                   const dailyRelease = daysCount > 0 ? (capNow / daysCount) : 0
                   
-                  // 计算剩余天数 = (capNow - linePaid) / (capNow / daysCount)
-                  const remainingDays = dailyRelease > 0 ? ((capNow - linePaid) / dailyRelease) : 0
+                  // 计算剩余天数 = (capNow - linePaid) / (capNow / daysCount)，确保不为负数
+                  const remainingDays = dailyRelease > 0 ? Math.max(0, (capNow - linePaid) / dailyRelease) : 0
                   
                   return (
-                    <div className="staking-table-row" key={index}>
+                    <div className="staking-table-row" key={item.id || index}>
                       <div className="staking-table-cell col-index">{index + 1}</div>
                       <div className="staking-table-cell col-amount">{capNow.toFixed(2)}</div>
                       <div className="staking-table-cell col-daily">{dailyRelease.toFixed(2)}</div>
                       <div className="staking-table-cell col-days">{remainingDays.toFixed(0)}</div>
-                      <div className="staking-table-cell col-used">{used.toFixed(2)}</div>
                     </div>
                   )
                 })
               }
             </div>
           </div>
+          {/* 触底加载指示器 */}
+          <InfiniteScroll
+            loadMore={loadMoreOrders}
+            hasMore={hasMore}
+            threshold={50}
+          >
+            {ordersLoading && hasMore && (
+              <div className="loading-more">{t('Loading...')}</div>
+            )}
+          </InfiniteScroll>
         </div>
       </div>
     </>

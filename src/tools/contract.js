@@ -85,33 +85,22 @@ export class ETH {
     };
 
     static async getUserOverview(address = ETH.account) {
-        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer); // 创建合约对象
+        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi, ETH.signer); // 创建合约对象
         console.log('contract', contract)
         const res = await contract.userOverview(address)
         return res
     }
 
-    static async getChildrenPage(address = ETH.account, page = 0, pageSize = 20) {
-        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer); // 创建合约对象
-        const res = await contract.childrenPage(address, page, pageSize)
-        return res
-    }
-
     static async getUserQueueInfo(address = ETH.account) { 
-        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer);
+        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi, ETH.signer);
 
         return contract.getUserQueueInfo(address)
     };
 
-    static async getUserOrders(address = ETH.account, page = '0', pageSize = '10') {
-        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer); // 创建合约对象
-        return contract.getUserOrders(address, page, pageSize)
-    }
-
     static async getStakeQueuePage(page, pageSize) {
-        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi.VIEW, ETH.signer); // 创建合约对象
+        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi, ETH.signer); // 创建合约对象
 
-        return contract.stakeQueuePage(page, pageSize)
+        return contract.queuePage(page, pageSize)
     }
 
     static async getMyStakesPage(page, pageSize) {
@@ -133,6 +122,11 @@ export class ETH {
     static async orders(address = ETH.account, page = 0, pageSize = 10) {
         const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi, ETH.signer);
         return contract.orders(address, page, pageSize)
+    }
+
+    // getUserOrders 是 orders 的别名，保持向后兼容
+    static async getUserOrders(address = ETH.account, page = 0, pageSize = 10) {
+        return ETH.orders(address, page, pageSize)
     }
 
     static async children(address = ETH.account, page = 0, pageSize = 20) {
