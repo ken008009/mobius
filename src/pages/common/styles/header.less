@@ -76,6 +76,7 @@ body {
   align-items: center;
   padding: 40px 0;
   overflow-y: auto;
+  position: relative;
   .menu-close-btn {
     position: absolute;
     left: 10px;
@@ -158,6 +159,30 @@ body {
       }
     }
   }
+  // 左下角：My Top 信息（绝对定位）
+  .sidebar-user-info {
+    position: absolute;
+    left: 22px;
+    bottom: 40px;
+    max-width: calc(100% - 140px);
+    
+    h3 {
+      font-size: 12px;
+      color: #9ca3af;
+      margin: 0 0 4px 0;
+      font-weight: 500;
+    }
+    
+    p {
+      font-size: 14px;
+      color: #fff;
+      margin: 0;
+      font-family: monospace;
+      word-break: break-all;
+    }
+  }
+  
+  // 右下角：语言切换（保持原有样式）
   .sidebar-foot {
     width: 100%;
     display: flex;
@@ -165,6 +190,7 @@ body {
     height: 80px;
     flex-shrink: 0;
     padding: 40px 22px;
+    margin-top: auto;
     .language-btn {
       height: 40px;
       background: none;

@@ -22,60 +22,93 @@ export class ETH {
     static provider = undefined;    // 提供者
     static account = "";         // 钱包地址
     static signer = undefined;       // 用户签名者
+    
+    // ========== Promise 锁：防止并发调用造成 MetaMask 阻塞 ==========
+    static _connectingPromise = null
 
-    // 链接钱包返回钱包地址
-    static async getAccount() {
-        const ethereum = await detectEthereumProvider(); // 检测以太坊提供者
-        if (!ethereum) { // 如果未检测到以太坊提供者
-          Toast.show(t('Please install a wallet')); // 显示失败的提示信息
-            throw t('Please install a wallet'); // 抛出错误信息
+    /**
+     * 确保钱包已连接：如果正在连接中，复用已有 Promise
+     * 避免多个并发调用触发多次 wallet_switchEthereumChain
+     */
+    static async ensureWallet() {
+        console.log('🔐 [ensureWallet] signer:', !!ETH.signer, 'connectingPromise:', !!ETH._connectingPromise)
+        
+        if (ETH.signer) {
+            console.log('🔐 [ensureWallet] 已有 signer，直接返回')
+            return ETH.account
         }
-
-        // 1️⃣ 主动切换到 BNB Chain
+        if (ETH._connectingPromise) {
+            console.log('🔐 [ensureWallet] 正在连接中，等待已有 Promise')
+            return await ETH._connectingPromise
+        }
+        
+        console.log('🔐 [ensureWallet] 开始新连接')
+        ETH._connectingPromise = ETH._doConnect()
         try {
-            await ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: '0x38' }], // BNB Mainnet
-            });
-        } catch (switchError) {
-            // 2️⃣ 如果钱包没有 BNB 网络，则自动添加
-            if (switchError.code === 4902) {
+            return await ETH._connectingPromise
+        } finally {
+            ETH._connectingPromise = null
+            console.log('🔐 [ensureWallet] 连接完成，重置 Promise 锁')
+        }
+    }
+    
+    /**
+     * 实际执行连接（内部方法）
+     */
+    static async _doConnect() {
+        const ethereum = await detectEthereumProvider()
+        if (!ethereum) {
+            Toast.show(t('Please install a wallet'))
+            throw t('Please install a wallet')
+        }
+        
+        // 提前检查当前 chainId，如果已经是目标链则跳过 switch
+        const currentChainIdHex = await ethereum.request({ method: 'eth_chainId' })
+        const targetChainIdHex = '0x38'
+        console.log('🔗 [_doConnect] 当前链:', currentChainIdHex, '目标链:', targetChainIdHex)
+        
+        if (currentChainIdHex !== targetChainIdHex) {
+            console.log('🔗 [_doConnect] 需要切换链，调用 wallet_switchEthereumChain')
             try {
                 await ethereum.request({
-                method: 'wallet_addEthereumChain',
-                params: [{
-                    chainId: '0x38',
-                    chainName: 'BNB Smart Chain',
-                    nativeCurrency: {
-                    name: 'BNB',
-                    symbol: 'BNB',
-                    decimals: 18,
-                    },
-                    rpcUrls: ['https://bsc-dataseed.binance.org/'],
-                    blockExplorerUrls: ['https://bscscan.com'],
-                }],
-                });
-            } catch (addError) {
-                Toast.show(t('Failed to add BNB network'));
-                throw addError;
-            }
-            } else {
-            Toast.show(t('Please switch to the BNB network'));
-            throw switchError;
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: targetChainIdHex }],
+                })
+            } catch (switchError) {
+                if (switchError.code === 4902) {
+                    await ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [{
+                            chainId: '0x38',
+                            chainName: 'BNB Smart Chain',
+                            nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+                            rpcUrls: ['https://bsc-dataseed.binance.org/'],
+                            blockExplorerUrls: ['https://bscscan.com'],
+                        }],
+                    })
+                } else {
+                    Toast.show(t('Please switch to the BNB network'))
+                    throw switchError
+                }
             }
         }
-
-        ETH.provider = new ethers.providers.Web3Provider(ethereum); // 使用 Web3Provider 创建提供者
-        const chainId = Number(await ethereum.request({ method: 'eth_chainId' })); // 获取链ID
-        console.log('chainId', chainId)
-        if (!(chainId === Number(import.meta.env.VITE_CHAINID) || chainId === 1)) { // 如果链ID不匹配
-          Toast.show(t('Please connect to the BSC network')); // 显示失败的提示信息
-            throw t('Please connect to the BSC network'); // 抛出错误信息
+        
+        ETH.provider = new ethers.providers.Web3Provider(ethereum)
+        const chainId = Number(await ethereum.request({ method: 'eth_chainId' }))
+        if (!(chainId === Number(import.meta.env.VITE_CHAINID) || chainId === 1)) {
+            Toast.show(t('Please connect to the BSC network'))
+            throw t('Please connect to the BSC network')
         }
-        ETH.account = ethers.utils.getAddress((await ethereum.request({ method: 'eth_requestAccounts' }))[0]); // 获取钱包地址
-        ETH.signer = ETH.provider.getSigner(); // 获取用户签名者
-        return ETH.account; // 返回钱包地址
+        ETH.account = ethers.utils.getAddress((await ethereum.request({ method: 'eth_requestAccounts' }))[0])
+        ETH.signer = ETH.provider.getSigner()
+        return ETH.account
     }
+
+    // 链接钱包返回钱包地址（主动连接入口，保持向后兼容）
+    static async getAccount() {
+        return ETH.ensureWallet()
+    }
+
     static formatToken(value, decimals = 18, fixed = 3) {
         if (!value) return '0';
 
@@ -109,19 +142,55 @@ export class ETH {
         return contract.myStakesPage(ETH.account, page, pageSize)
     }
 
+    // ========== 只读方法：使用 eth_call，避免 ethers.Contract 挂起问题 ==========
+
     static async plans() {
-        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi, ETH.signer);
-        return contract.plans()
+        const iface = new ethers.utils.Interface(['function plans() view returns (tuple(uint256 index, uint128 minAmount, uint128 maxAmount, uint128 outAmount, uint32 daysCount, bool enabled)[])']);
+        const raw = await window.ethereum.request({
+            method: 'eth_call',
+            params: [{ to: import.meta.env.VITE_VIEW, data: iface.encodeFunctionData('plans', []) }, 'latest']
+        });
+        const decoded = iface.decodeFunctionResult('plans', raw);
+        return decoded[0].map(item => ({
+            index: item[0], minAmount: item[1], maxAmount: item[2],
+            outAmount: item[3], daysCount: item[4], enabled: item[5]
+        }));
     }
 
     static async userView(address = ETH.account) {
-        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi, ETH.signer);
-        return contract.userView(address)
+        const iface = new ethers.utils.Interface(['function userView(address a) view returns (tuple(bool bound, bool sys, bool locked, address parent, int8 level, uint16 rate, uint256 tokenBal, uint256 usdtBal, uint256 principalU, uint256 exemptToken, uint256 baseStake, uint256 basePerf, uint256 perf, uint256 teamU, uint256 teamClaimed, uint256 levelRewardTotal, uint40 teamClearAt, uint40 teamClearDeadline, bool teamExpired, uint256 orderCount, uint256 capLeftTotal, uint256 teamNeedCap, uint256 lineClaimableTotal) v)']);
+        const raw = await window.ethereum.request({
+            method: 'eth_call',
+            params: [{ to: import.meta.env.VITE_VIEW, data: iface.encodeFunctionData('userView', [address]) }, 'latest']
+        });
+        const decoded = iface.decodeFunctionResult('userView', raw);
+        const item = decoded[0];
+        return {
+            bound: item[0], sys: item[1], locked: item[2], parent: item[3],
+            level: item[4], rate: item[5], tokenBal: item[6], usdtBal: item[7],
+            principalU: item[8], exemptToken: item[9], baseStake: item[10],
+            basePerf: item[11], perf: item[12], teamU: item[13],
+            teamClaimed: item[14], levelRewardTotal: item[15],
+            teamClearAt: item[16], teamClearDeadline: item[17],
+            teamExpired: item[18], orderCount: item[19], capLeftTotal: item[20],
+            teamNeedCap: item[21], lineClaimableTotal: item[22]
+        };
     }
 
     static async orders(address = ETH.account, page = 0, pageSize = 10) {
-        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi, ETH.signer);
-        return contract.orders(address, page, pageSize)
+        const iface = new ethers.utils.Interface(['function orders(address a, uint256 off, uint256 lim) view returns (tuple(uint256 index, uint256 id, address account, uint128 amount, uint128 cap, uint128 used, uint128 linePaid, uint40 created, uint40 start, uint40 claimEffective, uint40 effectiveNow, uint32 daysCount, bool exited, uint256 capNow, uint256 left, uint256 comp, uint256 lineClaimable)[] out)']);
+        const raw = await window.ethereum.request({
+            method: 'eth_call',
+            params: [{ to: import.meta.env.VITE_VIEW, data: iface.encodeFunctionData('orders', [address, page, pageSize]) }, 'latest']
+        });
+        const decoded = iface.decodeFunctionResult('orders', raw);
+        return decoded[0].map(item => ({
+            index: item[0], id: item[1], account: item[2], amount: item[3],
+            cap: item[4], used: item[5], linePaid: item[6], created: item[7],
+            start: item[8], claimEffective: item[9], effectiveNow: item[10],
+            daysCount: item[11], exited: item[12], capNow: item[13],
+            left: item[14], comp: item[15], lineClaimable: item[16]
+        }));
     }
 
     // getUserOrders 是 orders 的别名，保持向后兼容
@@ -130,8 +199,16 @@ export class ETH {
     }
 
     static async children(address = ETH.account, page = 0, pageSize = 20) {
-        const contract = new ethers.Contract(import.meta.env.VITE_VIEW, abi, ETH.signer);
-        return contract.children(address, page, pageSize)
+        const iface = new ethers.utils.Interface(['function children(address a, uint256 off, uint256 lim) view returns (tuple(address account, uint256 baseStake, uint256 basePerf, uint256 perf, int8 level, uint16 rate)[] out)']);
+        const raw = await window.ethereum.request({
+            method: 'eth_call',
+            params: [{ to: import.meta.env.VITE_VIEW, data: iface.encodeFunctionData('children', [address, page, pageSize]) }, 'latest']
+        });
+        const decoded = iface.decodeFunctionResult('children', raw);
+        return decoded[0].map(item => ({
+            account: item[0], baseStake: item[1], basePerf: item[2],
+            perf: item[3], level: item[4], rate: item[5]
+        }));
     }
 
     // 获取全局视图数据
@@ -161,6 +238,12 @@ export class ETH {
         // amount 需要转换为 wei 单位
         const amountWei = ETH.parseUnits(amount, 18);
         return contract.stake(amountWei, plan)
+    }
+
+    // 领取单个订单奖励：调用 claimLine(index)
+    static async claimLine(index) {
+        const contract = new ethers.Contract(import.meta.env.VITE_BUY, stakeAbi, ETH.signer);
+        return contract.claimLine(index)
     }
 
     // 一键领取所有奖励：调用 claimLineAll(maxOrders)

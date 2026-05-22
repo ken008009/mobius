@@ -83,32 +83,42 @@ const Staking = (props) => {
   // 实时加载标记：防止重复加载竞态（React setState 是异步的）
   // 与 ordersLoading state 同步使用，但 ref 能立即读取最新值
   const loadingRef = useRef(false)
+  
+  // 初始化锁：防止 React 严格模式导致 useEffect 执行两次
+  const initializedRef = useRef(false)
 
   useEffect(() => {
+    // React 18 严格模式会导致 useEffect 执行两次
+    // 用 initializedRef 确保只执行一次初始化
+    if (initializedRef.current) {
+      console.log('⏭️ [initData] 已初始化，跳过')
+      return
+    }
+    initializedRef.current = true
+    
     cancelledRef.current = false
     loadingRef.current = false
     
-    // 先串行确保钱包已连接，再并行调用 RPC
-    // 避免 4 个函数同时调用 ETH.getAccount() 触发多次 wallet_switchEthereumChain 造成 MetaMask 阻塞
-    // 类比 Vue：相当于在 onMounted 里 await 一次再触发 Promise.all
+    // 初始化数据：先串行确保钱包连接，再串行调用 RPC
     const initData = async () => {
+      console.log('🚀 [initData] 开始初始化')
       try {
-        // 1️⃣ 串行：确保 signer 就绪（只触发一次钱包连接）
-        if (!ETH.signer) {
-          await ETH.getAccount()
-        }
+        // 1️⃣ 确保钱包已连接（Promise 锁确保只触发一次链切换）
+        await ETH.getAccount()
         
         if (cancelledRef.current) return
         
-        // 2️⃣ 并行：四个 RPC 请求互不依赖，可显著缩短首屏数据加载时间
-        await Promise.all([
-          getPlansMinAmount(),
-          getUserCapLeftTotal(),
-          getUserOrders(1),
-          checkUserRegistered()
-        ])
+        // 2️⃣ 串行调用只读方法
+        await getPlansMinAmount()
+        await getUserCapLeftTotal()
+        await getUserOrders(1)
+        await checkUserRegistered()
+        
+        console.log('✅ [initData] 初始化完成')
       } catch (error) {
-        console.error('❌ 初始化数据加载失败:', error)
+        console.error('❌ [initData] 初始化失败:', error)
+        // 重置初始化锁，允许下次重试
+        initializedRef.current = false
       }
     }
     
@@ -129,10 +139,6 @@ const Staking = (props) => {
 
   const checkUserRegistered = async () => {
     try {
-      if (!ETH.signer) {
-        await ETH.getAccount()
-      }
-      
       const userData = await ETH.userView()
       // 卸载后放弃 setState
       if (cancelledRef.current) return
@@ -161,11 +167,6 @@ const Staking = (props) => {
     setOrdersLoading(true)
     
     try {
-      // 先连接钱包，确保 signer 存在
-      if (!ETH.signer) {
-        await ETH.getAccount()
-      }
-      
       console.log('📡 正在调用 ETH.getUserOrders()...', { page, pageSize, isLoadMore })
       // 合约方法参数: (address, page, pageSize)，page 从 0 开始
       const result = await ETH.getUserOrders(ETH.account, page - 1, pageSize)
@@ -248,10 +249,8 @@ const Staking = (props) => {
     try {
       setClaimLoading(true)
       
-      // 确保钱包已连接
-      if (!ETH.signer) {
-        await ETH.getAccount()
-      }
+      // ETH.getAccount() 有 Promise 锁，并发调用只触发一次
+      if (!ETH.signer) await ETH.getAccount()
       
       console.log('📡 调用 claimLineAll，参数:', { orderCount })
       
@@ -284,10 +283,8 @@ const Staking = (props) => {
     try {
       setClaimingLineIndex(index)
       
-      // 确保钱包已连接
-      if (!ETH.signer) {
-        await ETH.getAccount()
-      }
+      // ETH.getAccount() 有 Promise 锁，并发调用只触发一次
+      if (!ETH.signer) await ETH.getAccount()
       
       console.log('📡 调用 claimLine，订单 index:', index)
       
@@ -318,14 +315,18 @@ const Staking = (props) => {
       if (cancelledRef.current) return
       
       if (userData) {
-        if (userData.capLeftTotal) {
-          const capLeft = ETH.formatUnits(userData.capLeftTotal, 18)
+        // 使用 Big.js 处理大数字，避免 JavaScript Number 精度丢失
+        // 保持 4 位小数精度用于显示，使用 toFixed(4) 后转 Number
+        if (userData.capLeftTotal !== undefined) {
+          const capLeft = new Big(ETH.formatUnits(userData.capLeftTotal, 18)).toFixed(4)
           console.log('剩余额度:', capLeft)
           setCapLeftTotal(Number(capLeft))
         }
-        if (userData.lineClaimableTotal) {
-          const claimable = ETH.formatUnits(userData.lineClaimableTotal, 18)
-          console.log('可领取奖励:', claimable)
+        // 可领取奖励：使用 Big.js 确保精度，保留 4 位小数
+        if (userData.lineClaimableTotal !== undefined) {
+          const claimableRaw = ETH.formatUnits(userData.lineClaimableTotal, 18)
+          const claimable = new Big(claimableRaw).toFixed(2)
+          console.log('可领取奖励:', claimable, 'USDT')
           setLineClaimableTotal(Number(claimable))
         }
         if (userData.orderCount !== undefined) {
@@ -443,10 +444,8 @@ const Staking = (props) => {
     try {
       setStakeLoading(true)
       
-      // 确保钱包已连接
-      if (!ETH.signer) {
-        await ETH.getAccount()
-      }
+      // ETH.getAccount() 有 Promise 锁，并发调用只触发一次
+      if (!ETH.signer) await ETH.getAccount()
       
       // 检查 USDT 授权额度
       const allowance = await ETH.checkUsdtAllowance()

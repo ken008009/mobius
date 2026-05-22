@@ -276,14 +276,14 @@ const Community = (props) => {
           !isRegistered && <button className="join-team-btn" onClick={() => handleJoinTeam()}>{t('Join Team')}</button>
         }
         <div className="community-info full-width">
-          {
+          {/* {
             isRegistered && (
               <div className="community-info-item full-width">
                 <h3>{t('My Top')}</h3>
                 <p>{props.formatAddress(parent)}</p>
               </div>
             )
-          }
+          } */}
           <div className="community-info-item full-width">
             <h3>{t('My Level')}</h3>
             <p>{level}</p>
