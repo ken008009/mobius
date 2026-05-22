@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import CommunityBanner from '@images/m/community-banner.png'
 import { Contract, ETH } from '@tools/contract'
 import { Input, Button, Dialog, Toast } from 'antd-mobile'
@@ -18,13 +18,22 @@ const Community = (props) => {
   const [baseStakedAmount, setBaseStakedAmount] = useState('0')
   const [isRegistered, setIsRegistered] = useState(false)
   const [parent, setParent] = useState('')
-  const [loading, setLoading] = useState(false)
+  // 仅用于 handleClaimTeam，独立 loading 状态
+  const [claimLoading, setClaimLoading] = useState(false)
 
   const { t } = props
 
+  // 卸载标记：阻止异步回调在组件卸载后调用 setState
+  // 用 useRef 而非 useState，因为它不需要触发重渲染（类比 Vue 的非响应式实例字段）
+  const cancelledRef = useRef(false)
+
   useEffect(() => {
-    getChildrenPage()
-    getUserView() // 获取 userView 数据
+    cancelledRef.current = false
+    // 两个 RPC 请求互不依赖，并行触发可显著缩短首屏数据加载时间
+    Promise.all([getChildrenPage(), getUserView()])
+    return () => {
+      cancelledRef.current = true
+    }
   }, [])
 
   const getChildrenPage = async () => {
@@ -45,6 +54,8 @@ const Community = (props) => {
         perf: item.perf ? Number(ETH.formatUnits(item.perf, 18)).toFixed(2) : '0'
       }))
       
+      // 卸载后不再 setState
+      if (cancelledRef.current) return
       setChildrenList(formattedChildren)
     } catch (error) {
       console.error('❌ 获取 children 失败:', error)
@@ -53,18 +64,18 @@ const Community = (props) => {
 
   // 领取团队奖励
   const handleClaimTeam = async () => {
+    // 检查可领取金额（提前检查，避免不必要的 loading）
+    if (!teamU || Number(teamU) <= 0) {
+      Toast.show(t('No team rewards to claim'))
+      return
+    }
+    
     try {
-      setLoading(true)
+      setClaimLoading(true)
       
       // 确保钱包已连接
       if (!ETH.signer) {
         await ETH.getAccount()
-      }
-      
-      // 检查可领取金额
-      if (!teamU || Number(teamU) <= 0) {
-        Toast.show('暂无团队奖励可领取')
-        return
       }
       
       console.log('📡 调用 claimTeam，参数:', { amount: teamU })
@@ -72,18 +83,15 @@ const Community = (props) => {
       const result = await ETH.claimTeam(teamU)
       console.log('✅ claimTeam 成功:', result)
       
-      Toast.show('领取成功！')
+      Toast.show(t('Claim successful'))
       
-      // 更新 teamU 为 0
-      setTeamU('0')
-      
-      // 刷新用户数据
-      getUserView()
+      // 刷新用户数据（不手动设置 teamU，完全依赖 getUserView 刷新）
+      await getUserView()
     } catch (error) {
       console.error('❌ claimTeam 失败:', error)
-      Toast.show(error.message || '领取失败，请重试')
+      Toast.show(error.message || t('Claim failed, please try again'))
     } finally {
-      setLoading(false)
+      if (!cancelledRef.current) setClaimLoading(false)
     }
   }
 
@@ -96,6 +104,9 @@ const Community = (props) => {
       
       const userData = await ETH.userView()
       console.log('✅ community.jsx 获取到 userView 数据:', userData)
+      
+      // 卸载后立即放弃，避免后续一连串 setState
+      if (cancelledRef.current) return
       
       if (userData) {
         // 从 userView 获取所有字段
@@ -139,6 +150,9 @@ const Community = (props) => {
         } else if (userData.parent && userData.parent !== '0x0000000000000000000000000000000000000000') {
           // 如果 bound 字段不存在，则通过 parent 地址判断
           setIsRegistered(true)
+        } else {
+          // 明确设为 false，防止旧状态残留
+          setIsRegistered(false)
         }
         if (userData.baseStake) {
           const baseStake = ETH.formatUnits(userData.baseStake, 18)
@@ -149,6 +163,8 @@ const Community = (props) => {
         try {
           const plans = await ETH.plans()
           console.log('✅ 获取到 plans 数据:', plans)
+          // 卸载后放弃 setState
+          if (cancelledRef.current) return
           if (plans && plans.length > 0 && plans[0].outAmount && plans[0].maxAmount) {
             const outAmount = Number(ETH.formatUnits(plans[0].outAmount, 18))
             const maxAmount = Number(ETH.formatUnits(plans[0].maxAmount, 18))
@@ -207,7 +223,7 @@ const Community = (props) => {
             <p>{basePerf} US$</p>
           </div>
           <div className="community-info-item">
-            <h3>已领取团队奖励</h3>
+            <h3>{t('Claimed Team Rewards')}</h3>
             <p>{teamCount} US$</p>
           </div>
         </div>
@@ -215,28 +231,28 @@ const Community = (props) => {
         <div className="community-reward">
           <div className="reward-content">
             <div className="reward-item">
-              <span className="reward-label">可领取奖励</span>
+              <span className="reward-label">{t('Claimable Reward')}</span>
               <span className="reward-value">{teamU} USDT</span>
-              <button className="reward-buy-btn" onClick={handleClaimTeam} disabled={loading || Number(teamU) <= 0}>
-                {loading ? '领取中...' : '一键领取'}
+              <button className="reward-buy-btn" onClick={handleClaimTeam} disabled={claimLoading || Number(teamU) <= 0}>
+                {claimLoading ? t('Claiming...') : t('Claim All')}
               </button>
             </div>
             <div className="reward-item highlight">
-              <span className="reward-label">需补足金额</span>
+              <span className="reward-label">{t('Amount to Replenish')}</span>
               <span className="reward-value">{needAmount} USDT</span>
               <button className="reward-buy-btn" onClick={() => {
                 // 需补足金额大于0时才跳转
                 const amount = Number(needAmount)
                 if (amount <= 0) {
-                  Toast.show('暂无需要补足的金额')
+                  Toast.show(t('No amount to replenish'))
                   return
                 }
                 // 跳转到理财页面，传递需补足金额
                 props.navigate('/staking', { state: { needAmount: amount } })
-              }}>一键购买额度</button>
+              }}>{t('Buy Cap')}</button>
             </div>
             <div className="reward-notice">
-              <span>⏰ 7天内领取，否则奖励不再计算</span>
+              <span>{t('⏰ Claim within 7 days, or rewards will not be counted')}</span>
             </div>
           </div>
         </div>
@@ -246,7 +262,7 @@ const Community = (props) => {
         <div className="community-reward">
           <div className="reward-content">
             <div className="reward-item">
-              <span className="reward-label">手续费分红</span>
+              <span className="reward-label">{t('Fee Dividend')}</span>
               <span className="reward-value">{levelRewardTotal} USDT</span>
             </div>
           </div>
@@ -270,15 +286,15 @@ const Community = (props) => {
           <div className="community-table">
             <div className="community-table-head">
               <div className="community-table-row">
-                <div className="community-table-cell col-index">序号</div>
+                <div className="community-table-cell col-index">{t('No.')}</div>
                 <div className="community-table-cell col-address">{t('Wallet Addresses')}</div>
-                <div className="community-table-cell col-amount">金额</div>
-                <div className="community-table-cell col-perf">业绩</div>
+                <div className="community-table-cell col-amount">{t('Amount')}</div>
+                <div className="community-table-cell col-perf">{t('Performance')}</div>
               </div>
             </div>
             <div className="community-table-main">
               {
-                childrenList.length === 0 && <div className="no-data">暂无团队数据</div>
+                childrenList.length === 0 && <div className="no-data">{t('No team data')}</div>
               }
               {
                 childrenList.map((item, index) => (

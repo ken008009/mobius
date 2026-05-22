@@ -206,7 +206,7 @@ const Header = (props) => {
           </div>
           <div className="menu-list">
             <div className={classnames('menu-item', {active: location.pathname === '/'})} onClick={() => openPage('/')}>{t('HOME')}</div>
-            <div className={classnames('menu-item', {active: location.pathname === '/staking'})} onClick={() => openPage('/staking')}>理财</div>
+            <div className={classnames('menu-item', {active: location.pathname === '/staking'})} onClick={() => openPage('/staking')}>{t('STAKING')}</div>
             <div className={classnames('menu-item', {active: location.pathname === '/community'})} onClick={() => openPage('/community')}>{t('COMMUNITY')}</div>
             <div className={classnames('menu-item', {active: location.pathname === '/courses'})} onClick={() => openPage('/courses')}>{t('COURSES')}</div>
           </div>
