@@ -62,7 +62,7 @@ const Community = (props) => {
       
       console.log('📡 正在调用 ETH.children()...', { page, pageSize, isLoadMore })
       // 合约方法参数: (address, page, pageSize)，page 从 0 开始
-      const result = await ETH.children(ETH.account, page - 1, pageSize)
+      const result = await ETH.children(ETH.account, (page - 1) * pageSize, pageSize)
       console.log('✅ 获取到 children 数据:', result)
       
       // 卸载后不再 setState

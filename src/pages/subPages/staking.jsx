@@ -46,7 +46,7 @@ const Staking = (props) => {
   const [orders, setOrders] = useState([])
   const ordersPageRef = useRef(1)                       // 当前页码（实时读取，避免闭包陷阱）
   const ordersPageSize = 10                             // 每页条数（固定）
-  const [hasMore, setHasMore] = useState(true)         // 是否还有更多数据
+  const [hasMore, setHasMore] = useState(false)        // 首页加载完成后再开启触底加载
   const [ordersLoading, setOrdersLoading] = useState(false) // 加载中状态
   const [usdtApprove, setUsdtApprove] = useState(false)
   // 拆分 loading：stake 与 claim 互不干扰，避免各自按钮在另一个流程进行时错误变成 loading 状态
@@ -87,6 +87,9 @@ const Staking = (props) => {
   const initializedRef = useRef(false)
 
   useEffect(() => {
+    // 每次挂载都重置卸载标记（React 18 Strict Mode 会卸载后重新挂载）
+    cancelledRef.current = false
+
     // React 18 严格模式会导致 useEffect 执行两次
     // 用 initializedRef 确保只执行一次初始化
     if (initializedRef.current) {
@@ -95,7 +98,6 @@ const Staking = (props) => {
     }
     initializedRef.current = true
     
-    cancelledRef.current = false
     loadingRef.current = false
     
     // 初始化数据：先串行确保钱包连接，再串行调用 RPC
@@ -167,7 +169,7 @@ const Staking = (props) => {
     
     try {
       console.log('📡 正在调用 ETH.getUserOrders()...', { page, pageSize, isLoadMore })
-      const result = await ETH.getUserOrders(ETH.account, page - 1, pageSize)
+      const result = await ETH.getUserOrders(ETH.account, (page - 1) * pageSize, pageSize)
       console.log('✅ 获取到 orders 数据:', result)
       
       // 组件卸载后放弃 setState
@@ -198,7 +200,9 @@ const Staking = (props) => {
       setHasMore(false)
     } finally {
       loadingRef.current = false
-      setOrdersLoading(false)
+      if (!cancelledRef.current) {
+        setOrdersLoading(false)
+      }
     }
   }
 
@@ -212,7 +216,7 @@ const Staking = (props) => {
   // 刷新订单列表（重置到第一页）
   const refreshOrders = async () => {
     ordersPageRef.current = 1
-    setHasMore(true)
+    setHasMore(false)
     await getUserOrders(1, ordersPageSize, false)
   }
 
@@ -568,7 +572,7 @@ const Staking = (props) => {
                   const remainingCap = Math.max(0, capNow - used)
                   
                   return (
-                    <div className="staking-table-row" key={item.id || index}>
+                    <div className="staking-table-row" key={index}>
                       <div className="staking-table-cell col-index">{index + 1}</div>
                       <div className="staking-table-cell col-amount">{remainingCap.toFixed(2)}</div>
                       <div className="staking-table-cell col-daily">{lineClaimable.toFixed(2)}</div>
