@@ -53,6 +53,7 @@ const Staking = (props) => {
   // 拆分 loading：stake 与 claim 互不干扰，避免各自按钮在另一个流程进行时错误变成 loading 状态
   const [stakeLoading, setStakeLoading] = useState(false)
   const [claimLoading, setClaimLoading] = useState(false)
+  const [claimingLineIndex, setClaimingLineIndex] = useState(null) // 当前正在领取的订单 index
   const [isRegistered, setIsRegistered] = useState(false)
   const [maxStakeAmountNow, setMaxStakeAmountNow] = useState(0)
   const [usdtBalance, setUsdtBalance] = useState(0)
@@ -86,15 +87,32 @@ const Staking = (props) => {
   useEffect(() => {
     cancelledRef.current = false
     loadingRef.current = false
-    // 四个 RPC 请求互不依赖，并行触发可显著缩短首屏数据加载时间
-    Promise.all([
-      getPlansMinAmount(),
-      getUserCapLeftTotal(),
-      getUserOrders(1),
-      checkUserRegistered()
-    ]).catch(error => {
-      console.error('❌ 初始化数据加载失败:', error)
-    })
+    
+    // 先串行确保钱包已连接，再并行调用 RPC
+    // 避免 4 个函数同时调用 ETH.getAccount() 触发多次 wallet_switchEthereumChain 造成 MetaMask 阻塞
+    // 类比 Vue：相当于在 onMounted 里 await 一次再触发 Promise.all
+    const initData = async () => {
+      try {
+        // 1️⃣ 串行：确保 signer 就绪（只触发一次钱包连接）
+        if (!ETH.signer) {
+          await ETH.getAccount()
+        }
+        
+        if (cancelledRef.current) return
+        
+        // 2️⃣ 并行：四个 RPC 请求互不依赖，可显著缩短首屏数据加载时间
+        await Promise.all([
+          getPlansMinAmount(),
+          getUserCapLeftTotal(),
+          getUserOrders(1),
+          checkUserRegistered()
+        ])
+      } catch (error) {
+        console.error('❌ 初始化数据加载失败:', error)
+      }
+    }
+    
+    initData()
     
     // 检查是否有从 community 页面传递过来的需补足金额
     if (routeNeedAmount) {
@@ -105,8 +123,9 @@ const Staking = (props) => {
     return () => {
       cancelledRef.current = true
     }
-    // 依赖 ETH.account：账户切换时重新加载数据
-  }, [ETH.account])
+    // 只在组件挂载时执行一次初始化
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const checkUserRegistered = async () => {
     try {
@@ -250,6 +269,42 @@ const Staking = (props) => {
     } finally {
       if (!cancelledRef.current) {
         setClaimLoading(false)
+      }
+    }
+  }
+
+  // 领取单个订单奖励
+  const handleClaimLine = async (index) => {
+    // 检查是否已有领取在进行中
+    if (claimingLineIndex !== null) {
+      Toast.show(t('Please wait for the current claim to complete'))
+      return
+    }
+    
+    try {
+      setClaimingLineIndex(index)
+      
+      // 确保钱包已连接
+      if (!ETH.signer) {
+        await ETH.getAccount()
+      }
+      
+      console.log('📡 调用 claimLine，订单 index:', index)
+      
+      const result = await ETH.claimLine(index)
+      console.log('✅ claimLine 成功:', result)
+      
+      Toast.show(t('Claim successful'))
+      
+      // 刷新订单列表和额度
+      await refreshOrders()
+      await getUserCapLeftTotal()
+    } catch (error) {
+      console.error('❌ claimLine 失败:', error)
+      Toast.show(error.message || t('Claim failed, please try again'))
+    } finally {
+      if (!cancelledRef.current) {
+        setClaimingLineIndex(null)
       }
     }
   }
@@ -541,7 +596,10 @@ const Staking = (props) => {
                       <div className="staking-table-cell col-amount">{remainingCap.toFixed(2)}</div>
                       <div className="staking-table-cell col-daily">{lineClaimable.toFixed(2)}</div>
                       <div className="staking-table-cell col-days">
-                        <button className="claim-btn-small" onClick={() => ETH.claimLine(item.index)}>
+                        <button 
+                          className="claim-btn-small" 
+                          onClick={() => handleClaimLine(item.index)}
+                        >
                           {t('Claim')}
                         </button>
                       </div>
