@@ -242,6 +242,7 @@
   "Remaining Cap": "残り限度額",
   "Claimable Reward": "受け取り可能な報酬",
   "Claim All": "一括受け取り",
+  "Claimable": "受け取り可能",
   "Order Records": "注文履歴",
   "No.": "番号",
   "Cap": "限度額",
@@ -258,5 +259,7 @@
   "⏰ Claim within 7 days, or rewards will not be counted": "⏰ 7日以内に受け取らないと報酬がカウントされません",
   "Fee Dividend": "手数料配当",
   "No team data": "チームデータがありません",
-  "Enter staking amount": "ステーキング金額を入力"
+  "Enter staking amount": "ステーキング金額を入力",
+  "Action": "操作",
+  "Claim": "受け取る"
 }

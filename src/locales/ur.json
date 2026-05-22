@@ -242,6 +242,7 @@
   "Remaining Cap": "باقی حد",
   "Claimable Reward": "قابل دعویٰ انعام",
   "Claim All": "سب دعویٰ کریں",
+  "Claimable": "قابل دعویٰ",
   "Order Records": "آرڈر ریکارڈز",
   "No.": "نمبر",
   "Cap": "حد",
@@ -258,5 +259,7 @@
   "⏰ Claim within 7 days, or rewards will not be counted": "⏰ 7 دنوں کے اندر دعویٰ کریں، ورنہ انعامات شمار نہیں ہوں گے",
   "Fee Dividend": "فیس ڈیویڈنڈ",
   "No team data": "کوئی ٹیم ڈیٹا نہیں",
-  "Enter staking amount": "اسٹیکنگ رقم درج کریں"
+  "Enter staking amount": "اسٹیکنگ رقم درج کریں",
+  "Action": "عمل",
+  "Claim": "دعویٰ کریں"
 }

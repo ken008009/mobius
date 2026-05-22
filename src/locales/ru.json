@@ -242,6 +242,7 @@
   "Remaining Cap": "Оставшийся лимит",
   "Claimable Reward": "Доступная награда",
   "Claim All": "Получить все",
+  "Claimable": "Доступно для получения",
   "Order Records": "Записи заказов",
   "No.": "№",
   "Cap": "Лимит",
@@ -258,5 +259,7 @@
   "⏰ Claim within 7 days, or rewards will not be counted": "⏰ Получите в течение 7 дней, иначе награды не будут учтены",
   "Fee Dividend": "Дивиденды от комиссий",
   "No team data": "Нет данных команды",
-  "Enter staking amount": "Введите сумму стейкинга"
+  "Enter staking amount": "Введите сумму стейкинга",
+  "Action": "Действие",
+  "Claim": "Получить"
 }

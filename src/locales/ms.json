@@ -242,6 +242,7 @@
   "Remaining Cap": "Baki Had",
   "Claimable Reward": "Ganjaran Boleh Dituntut",
   "Claim All": "Tuntut Semua",
+  "Claimable": "Boleh Dituntut",
   "Order Records": "Rekod Pesanan",
   "No.": "No.",
   "Cap": "Had",
@@ -258,5 +259,7 @@
   "⏰ Claim within 7 days, or rewards will not be counted": "⏰ Tuntut dalam 7 hari, atau ganjaran tidak akan dikira",
   "Fee Dividend": "Dividen Yuran",
   "No team data": "Tiada data pasukan",
-  "Enter staking amount": "Masukkan jumlah staking"
+  "Enter staking amount": "Masukkan jumlah staking",
+  "Action": "Tindakan",
+  "Claim": "Tuntut"
 }

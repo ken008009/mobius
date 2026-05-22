@@ -242,6 +242,7 @@
   "Remaining Cap": "الحد المتبقي",
   "Claimable Reward": "المكافأة القابلة للمطالبة",
   "Claim All": "المطالبة بالجميع",
+  "Claimable": "قابل للمطالبة",
   "Order Records": "سجلات الطلبات",
   "No.": "رقم",
   "Cap": "الحد",
@@ -258,5 +259,7 @@
   "⏰ Claim within 7 days, or rewards will not be counted": "⏰ المطالبة خلال 7 أيام، وإلا لن يتم احتساب المكافآت",
   "Fee Dividend": "توزيعات الرسوم",
   "No team data": "لا توجد بيانات الفريق",
-  "Enter staking amount": "أدخل مبلغ الرهن"
+  "Enter staking amount": "أدخل مبلغ الرهن",
+  "Action": "Action",
+  "Claim": "Claim"
 }

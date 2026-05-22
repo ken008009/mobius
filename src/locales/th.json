@@ -242,6 +242,7 @@
   "Remaining Cap": "โควต้าที่เหลือ",
   "Claimable Reward": "รางวัลที่สามารถรับได้",
   "Claim All": "รับทั้งหมด",
+  "Claimable": "รับได้",
   "Order Records": "บันทึกคำสั่งซื้อ",
   "No.": "ลำดับ",
   "Cap": "โควต้า",
@@ -258,5 +259,7 @@
   "⏰ Claim within 7 days, or rewards will not be counted": "⏰ รับภายใน 7 วัน มิฉะนั้นรางวัลจะไม่ถูกนับ",
   "Fee Dividend": "เงินปันผลค่าธรรมเนียม",
   "No team data": "ไม่มีข้อมูลทีม",
-  "Enter staking amount": "ป้อนจำนวนการสเตก"
+  "Enter staking amount": "ป้อนจำนวนการสเตก",
+  "Action": "การดำเนินการ",
+  "Claim": "รับ"
 }

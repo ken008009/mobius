@@ -518,9 +518,9 @@ const Staking = (props) => {
             <div className="staking-table-head">
               <div className="staking-table-row">
                 <div className="staking-table-cell col-index">{t('No.')}</div>
-                <div className="staking-table-cell col-amount">剩余额度</div>
-                <div className="staking-table-cell col-daily">可领取收益</div>
-                <div className="staking-table-cell col-days">操作</div>
+                <div className="staking-table-cell col-amount">{t('Remaining Cap')}</div>
+                <div className="staking-table-cell col-daily">{t('Claimable')}</div>
+                <div className="staking-table-cell col-days">{t('Action')}</div>
               </div>
             </div>
             <div className="staking-table-main">
@@ -529,21 +529,22 @@ const Staking = (props) => {
                 orders.map((item, index) => {
                   // 格式化字段
                   const capNow = item.capNow ? Number(ETH.formatUnits(item.capNow, 18)) : 0
-                  const linePaid = item.linePaid ? Number(ETH.formatUnits(item.linePaid, 18)) : 0
-                  const daysCount = item.daysCount ? Number(item.daysCount) : 0
+                  const used = item.used ? Number(ETH.formatUnits(item.used, 18)) : 0
+                  const lineClaimable = item.lineClaimable ? Number(ETH.formatUnits(item.lineClaimable, 18)) : 0
                   
-                  // 计算每日释放 = capNow / daysCount
-                  const dailyRelease = daysCount > 0 ? (capNow / daysCount) : 0
-                  
-                  // 计算剩余天数 = (capNow - linePaid) / (capNow / daysCount)，确保不为负数
-                  const remainingDays = dailyRelease > 0 ? Math.max(0, (capNow - linePaid) / dailyRelease) : 0
+                  // 剩余额度 = capNow - used
+                  const remainingCap = Math.max(0, capNow - used)
                   
                   return (
                     <div className="staking-table-row" key={item.id || index}>
                       <div className="staking-table-cell col-index">{index + 1}</div>
-                      <div className="staking-table-cell col-amount">{capNow.toFixed(2)}</div>
-                      <div className="staking-table-cell col-daily">{dailyRelease.toFixed(2)}</div>
-                      <div className="staking-table-cell col-days">{remainingDays.toFixed(0)}</div>
+                      <div className="staking-table-cell col-amount">{remainingCap.toFixed(2)}</div>
+                      <div className="staking-table-cell col-daily">{lineClaimable.toFixed(2)}</div>
+                      <div className="staking-table-cell col-days">
+                        <button className="claim-btn-small" onClick={() => ETH.claimLine(item.index)}>
+                          {t('Claim')}
+                        </button>
+                      </div>
                     </div>
                   )
                 })

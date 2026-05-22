@@ -242,6 +242,7 @@
   "Remaining Cap": "剩余额度",
   "Claimable Reward": "可领取奖励",
   "Claim All": "一键领取",
+  "Claimable": "可领取",
   "Order Records": "订单记录",
   "No.": "序号",
   "Cap": "额度",
@@ -258,5 +259,7 @@
   "⏰ Claim within 7 days, or rewards will not be counted": "⏰ 7天内领取，否则奖励不再计算",
   "Fee Dividend": "手续费分红",
   "No team data": "暂无团队数据",
-  "Enter staking amount": "请输入理财金额"
+  "Enter staking amount": "请输入理财金额",
+  "Action": "操作",
+  "Claim": "领取"
 }

@@ -242,6 +242,7 @@
   "Remaining Cap": "남은 한도",
   "Claimable Reward": "수령 가능한 보상",
   "Claim All": "일괄 수령",
+  "Claimable": "수령 가능",
   "Order Records": "주문 기록",
   "No.": "번호",
   "Cap": "한도",
@@ -258,5 +259,7 @@
   "⏰ Claim within 7 days, or rewards will not be counted": "⏰ 7일 이내에 수령하지 않으면 보상이 계산되지 않습니다",
   "Fee Dividend": "수수료 배당",
   "No team data": "팀 데이터 없음",
-  "Enter staking amount": "스테이킹 금액 입력"
+  "Enter staking amount": "스테이킹 금액 입력",
+  "Action": "작업",
+  "Claim": "수령"
 }

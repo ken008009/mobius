@@ -242,6 +242,7 @@
   "Remaining Cap": "剩餘額度",
   "Claimable Reward": "可領取獎勵",
   "Claim All": "一鍵領取",
+  "Claimable": "可領取",
   "Order Records": "訂單記錄",
   "No.": "序號",
   "Cap": "額度",
@@ -258,5 +259,7 @@
   "⏰ Claim within 7 days, or rewards will not be counted": "⏰ 7天內領取，否則獎勵不再計算",
   "Fee Dividend": "手續費分紅",
   "No team data": "暫無團隊數據",
-  "Enter staking amount": "請輸入理財金額"
+  "Enter staking amount": "請輸入理財金額",
+  "Action": "操作",
+  "Claim": "領取"
 }

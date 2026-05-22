@@ -221,6 +221,7 @@
   "Remaining Cap": "Remaining Cap",
   "Claimable Reward": "Claimable Reward",
   "Claim All": "Claim All",
+  "Claimable": "Claimable",
   "Order Records": "Order Records",
   "No.": "No.",
   "Cap": "Cap",
@@ -237,5 +238,7 @@
   "⏰ Claim within 7 days, or rewards will not be counted": "⏰ Claim within 7 days, or rewards will not be counted",
   "Fee Dividend": "Fee Dividend",
   "No team data": "No team data",
-  "Enter staking amount": "Enter staking amount"
+  "Enter staking amount": "Enter staking amount",
+  "Action": "Action",
+  "Claim": "Claim"
 }
