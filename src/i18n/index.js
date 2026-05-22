@@ -4,6 +4,7 @@ import en from '../locales/en.json';
 import ar from '../locales/ar.json';
 import enIN from '../locales/en-IN.json';
 import enSG from '../locales/en-SG.json';
+import enUS from '../locales/en-US.json';
 import ja from '../locales/ja.json';
 import ko from '../locales/ko.json';
 import ms from '../locales/ms.json';
@@ -27,6 +28,9 @@ const resources = {
   },
   'en-SG': {
     translation: enSG,
+  },
+  'en-US': {
+    translation: enUS,
   },
   ja: {
     translation: ja,

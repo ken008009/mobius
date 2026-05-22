@@ -518,9 +518,9 @@ const Staking = (props) => {
             <div className="staking-table-head">
               <div className="staking-table-row">
                 <div className="staking-table-cell col-index">{t('No.')}</div>
-                <div className="staking-table-cell col-amount">{t('Remaining Cap')}</div>
-                <div className="staking-table-cell col-daily">{t('Daily Release')}</div>
-                <div className="staking-table-cell col-days">{t('Remaining Days')}</div>
+                <div className="staking-table-cell col-amount">剩余额度</div>
+                <div className="staking-table-cell col-daily">可领取收益</div>
+                <div className="staking-table-cell col-days">操作</div>
               </div>
             </div>
             <div className="staking-table-main">
