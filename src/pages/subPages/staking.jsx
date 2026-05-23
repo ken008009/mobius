@@ -250,7 +250,7 @@ const Staking = (props) => {
           </div>
           <div className="staking-hint">{t('maturityAmount')}：{calcInterest(count, amount, active === '0' ? 1.012 : 1.013, active === '0' ? 30 : 180).toFixed(3)} USDT</div>
         </div>
-        <Button loading={loading} className="staking-btn" onClick={() => handleRegistered()}>{t('Start Liquidity Staking')}</Button>
+        <Button loading={loading} disabled className="staking-btn" onClick={() => handleRegistered()}>{t('Start Liquidity Staking')}</Button>
         <div className="staking-log">
           <div className="staking-log-title">{t('Waiting list')}</div>
           <div className="staking-log-list">
