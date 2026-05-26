@@ -15,10 +15,9 @@ const Community = (props) => {
   const [teamNeedCap, setTeamNeedCap] = useState('0') // 需补足金额
   const [needAmount, setNeedAmount] = useState('0') // 需补足金额（计算公式结果）
   const [childrenList, setChildrenList] = useState([]) // 团队用户列表（来自合约 children()）
-  const [childrenPage, setChildrenPage] = useState(1)      // 当前页码
-  const childrenPageSize = 10                            // 每页条数（固定）
-  const [childrenTotal, setChildrenTotal] = useState(0)    // 总条数
-  const [hasMore, setHasMore] = useState(true)             // 是否还有更多数据
+  const childrenPageRef = useRef(1)                       // 当前页码（实时读取，避免闭包陷阱）
+  const childrenPageSize = 10                             // 每页条数（固定）
+  const [hasMore, setHasMore] = useState(false)           // 首页加载完成后再开启触底加载
   const [childrenLoading, setChildrenLoading] = useState(false) // 加载中状态
   const [baseStakedAmount, setBaseStakedAmount] = useState('0')
   const [isRegistered, setIsRegistered] = useState(false)
@@ -48,8 +47,8 @@ const Community = (props) => {
   }, [ETH.account])
 
   // 获取团队列表（触底加载模式）
+  // 集中处理：加载锁、数据解析、状态更新、hasMore判断
   const getChildrenPage = async (page, pageSize = childrenPageSize, isLoadMore = false) => {
-    // 防止重复加载：使用 ref 实时检查（避免 setState 异步延迟问题）
     if (loadingRef.current) return
     loadingRef.current = true
     setChildrenLoading(true)
@@ -61,23 +60,20 @@ const Community = (props) => {
       }
       
       console.log('📡 正在调用 ETH.children()...', { page, pageSize, isLoadMore })
-      // 合约方法参数: (address, page, pageSize)，page 从 0 开始
+      // 合约方法参数: (address, off, lim)，off 是条目偏移量
       const result = await ETH.children(ETH.account, (page - 1) * pageSize, pageSize)
       console.log('✅ 获取到 children 数据:', result)
       
-      // 卸载后不再 setState
+      // 组件卸载后放弃 setState
       if (cancelledRef.current) return
       
       // 解析返回结果：可能是数组或包含列表+总数的对象
       let newChildren = []
-      let total = 0
       
       if (result && Array.isArray(result.list)) {
         newChildren = result.list || []
-        total = Number(result.total) || 0
       } else if (Array.isArray(result)) {
         newChildren = result || []
-        total = result.length
       }
       
       // 格式化数据
@@ -87,54 +83,46 @@ const Community = (props) => {
         perf: item.perf ? Number(ETH.formatUnits(item.perf, 18)).toFixed(2) : '0'
       }))
       
-      // 更新总条数
-      setChildrenTotal(total)
+      // 只有当返回条数等于 pageSize 时才可能有下一页
+      const hasMoreData = formattedChildren.length === pageSize
       
-      // 追加或替换数据，同时判断是否还有更多
-      // 使用函数式更新避免 React 闭包陷阱（类比 Vue 的响应式代理）
       if (isLoadMore) {
         // 触底加载：追加数据
-        setChildrenList(prev => {
-          const newList = [...prev, ...formattedChildren]
-          setHasMore(newList.length < total)
-          return newList
-        })
+        setChildrenList(prev => [...prev, ...formattedChildren])
       } else {
         // 首次加载或刷新：替换数据
-        setHasMore(formattedChildren.length < total)
         setChildrenList(formattedChildren)
       }
+      setHasMore(hasMoreData)
+      
+      // 同步更新页码 ref
+      childrenPageRef.current = page
       
     } catch (error) {
       console.error('❌ 获取 children 失败:', error)
       if (!isLoadMore) {
         setChildrenList([])
-        setChildrenTotal(0)
       }
       setHasMore(false)
     } finally {
       loadingRef.current = false
-      setChildrenLoading(false)
+      if (!cancelledRef.current) {
+        setChildrenLoading(false)
+      }
     }
   }
 
   // 触底加载更多
   const loadMoreChildren = async () => {
     if (!hasMore || loadingRef.current) return
-    
-    // 使用函数式更新页码，确保获取最新值（避免 React 闭包陷阱）
-    setChildrenPage(prev => {
-      const nextPage = prev + 1
-      // 立即执行加载，不等待 setState 完成
-      getChildrenPage(nextPage, childrenPageSize, true)
-      return nextPage
-    })
+    const nextPage = childrenPageRef.current + 1
+    await getChildrenPage(nextPage, childrenPageSize, true)
   }
 
   // 刷新团队列表（重置到第一页）
   const refreshChildren = async () => {
-    setChildrenPage(1)
-    setHasMore(true)
+    childrenPageRef.current = 1
+    setHasMore(false)
     await getChildrenPage(1, childrenPageSize, false)
   }
 
