@@ -8,6 +8,10 @@ const Notices = (props) => {
 
   const notices = [
     {
+      title: t('OKX Wallet Domain Notice'),
+      content: t('The official MS domain has been maliciously reported on OKX Wallet, causing OKX Wallet users to be unable to log in normally. MS users can log in via TP Wallet or Binance Wallet. To facilitate OKX Wallet MS users, the official team will reapply for a new domain. (Official recommendation: MS users are advised to use TP Wallet going forward.)')
+    },
+    {
       title: t('MS System Upgrade Announcement'),
       content: t('Considering the queue cycle of the MS financial project across multiple markets and its impact on team income and motivation, it has been decided to comprehensively upgrade the MS system. The upgraded MS 2.0 system will fully resolve the impact of queue cycles on earnings, while team rewards will also be comprehensively optimized.')
     },
