@@ -438,7 +438,8 @@ const Staking = (props) => {
       if (allowance.lt(amountWei)) {
         console.log('🔐 USDT 授权额度不足，正在授权...')
         Toast.show(t('USDT approving...'))
-        const approveTx = await ETH.approveUsdt()
+        // 按 handleStake 实际需要的额度授权
+        const approveTx = await ETH.approveUsdt(amountWei)
         await approveTx.wait()
         console.log('✅ USDT 授权成功')
       }

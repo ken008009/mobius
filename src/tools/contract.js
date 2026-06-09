@@ -266,8 +266,8 @@ export class ETH {
         return allowance;
     }
 
-    // 授权 USDT
-    static async approveUsdt(spender = import.meta.env.VITE_BUY, amount = '1000000000000000000000000') {
+    // 授权 USDT：amount 为需要授权的额度（wei），默认授权一个较大值兜底
+    static async approveUsdt(amount = '1000000000000000000000000', spender = import.meta.env.VITE_BUY) {
         const usdtContract = new ethers.Contract(import.meta.env.VITE_USDT, usdtAbi, ETH.signer);
         return usdtContract.approve(spender, amount);
     }
