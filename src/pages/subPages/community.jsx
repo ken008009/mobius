@@ -341,30 +341,37 @@ const Community = (props) => {
         {/* 团队明细  序号 地址 盈利宝额度  业绩  团队奖励 */}
         <div className="community-list">
           <div className="community-list-title">{t('Team List')}</div>
-          <div className="community-table">
-            <div className="community-table-head">
-              <div className="community-table-row">
-                <div className="community-table-cell col-index">{t('No.')}</div>
-                <div className="community-table-cell col-address">{t('Wallet Addresses')}</div>
-                <div className="community-table-cell col-amount">{t('Amount')}</div>
-                <div className="community-table-cell col-perf">{t('Performance')}</div>
-              </div>
-            </div>
-            <div className="community-table-main">
-              {
-                childrenList.length === 0 && !childrenLoading && <div className="no-data">{t('No team data')}</div>
-              }
-              {
-                childrenList.map((item, index) => (
-                  <div className="community-table-row" key={`${item.account}-${index}`}>
-                    <div className="community-table-cell col-index">{index + 1}</div>
-                    <div className="community-table-cell col-address">{props.formatAddress(item.account)}</div>
-                    <div className="community-table-cell col-amount">{item.baseStake} USDT</div>
-                    <div className="community-table-cell col-perf">{item.perf} USDT</div>
-                  </div>
-                ))
-              }
-            </div>
+          <div className="community-table-scroll">
+            {
+              childrenList.length === 0 && !childrenLoading ? (
+                <div className="community-table-empty">
+                  <div className="no-data">{t('No team data')}</div>
+                </div>
+              ) : (
+                <table className="community-table">
+                  <thead>
+                    <tr>
+                      <th className="col-index">{t('No.')}</th>
+                      <th className="col-address">{t('Wallet Addresses')}</th>
+                      <th className="col-amount">{t('Amount')}</th>
+                      <th className="col-perf">{t('Performance')}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      childrenList.map((item, index) => (
+                        <tr key={`${item.account}-${index}`}>
+                          <td className="col-index">{index + 1}</td>
+                          <td className="col-address">{props.formatAddress(item.account)}</td>
+                          <td className="col-amount">{item.baseStake}</td>
+                          <td className="col-perf">{item.perf}</td>
+                        </tr>
+                      ))
+                    }
+                  </tbody>
+                </table>
+              )
+            }
           </div>
           {/* 触底加载指示器 */}
           <InfiniteScroll

@@ -4,8 +4,12 @@ import svgr from 'vite-plugin-svgr';
 import path from 'path'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [react(), svgr()],
+  // 正式环境打包时移除 console / debugger，避免生产环境输出调试信息
+  esbuild: {
+    drop: mode === 'production' ? ['console', 'debugger'] : [],
+  },
   resolve: {
     alias: {
       '@app': path.join(__dirname, './src'),
@@ -31,4 +35,4 @@ export default defineConfig({
     host: true,
     port: 5113
   }
-})
+}))

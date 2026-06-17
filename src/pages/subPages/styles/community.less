@@ -224,6 +224,8 @@
     }
   }
   .community-list {
+    padding: 0 25px;
+
     .community-list-title {
       font-size: 24px;
       color: #15FAA3;
@@ -231,56 +233,71 @@
       text-align: center;
       margin-bottom: 30px;
     }
-    .community-table {
+
+    // 仅表格区域横向滚动，标题保持固定
+    .community-table-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 40px;
       background-color: rgba(255, 255, 255, 0.08);
-      margin: 0 25px 40px 25px;
       border-radius: 14px;
-      overflow: hidden;
       padding: 10px;
-      .community-table-head {
-        width: 100%;
+    }
+
+    .community-table-empty {
+      .no-data {
+        text-align: center;
+        padding: 20px 0;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 14px;
       }
-      .community-table-main {
-        width: 100%;
-        
-        .no-data {
-          text-align: center;
-          padding: 20px 0;
-          color: rgba(255, 255, 255, 0.6);
-          font-size: 14px;
-        }
-      }
-      .community-table-row {
-        width: 100%;
-        display: flex;
+    }
+
+    .community-table {
+      width: max-content;
+      min-width: 100%;
+      border-collapse: collapse;
+      table-layout: auto;
+
+      th,
+      td {
+        padding: 0 8px;
         height: 42px;
-        .community-table-cell {
-          height: 42px;
-          line-height: 42px;
-          text-align: center;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-          flex-shrink: 0;
-          
-          // 序号列：固定窄宽度
-          &.col-index {
-            width: 30px;
-            min-width: 30px;
-          }
-          // 地址列：中等宽度
-          &.col-address {
-            flex: 1.2;
-            min-width: 100px;
-          }
-          // 金额列：固定宽度
-          &.col-amount {
-            width: 80px;
-            min-width: 80px;
-          }
-          // 业绩列：固定宽度
-          &.col-perf {
-            width: 120px;
-            min-width: 120px;
-          }
+        line-height: 42px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        white-space: nowrap;
+        font-size: 12px;
+        color: #fff;
+        vertical-align: middle;
+      }
+
+      th {
+        font-weight: 600;
+      }
+
+      // 序号：尽量窄
+      .col-index {
+        width: 1%;
+        padding: 0 4px;
+      }
+
+      // 地址：保证缩略地址完整显示
+      .col-address {
+        min-width: 118px;
+      }
+
+      // 金额 / 业绩：随内容撑宽，数字等宽对齐
+      .col-amount,
+      .col-perf {
+        width: auto;
+        font-size: 11px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      tbody tr:last-child {
+        td {
+          border-bottom: none;
         }
       }
     }
