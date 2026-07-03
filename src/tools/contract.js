@@ -217,11 +217,10 @@ export class ETH {
         return contract.globalView()
     }
 
-    // 获取黑洞代币余额
+    // 获取黑洞代币余额（VITE_DB 合约在 DEAD 地址的余额）
     static async getTOKENBalance() {
-        const stakeContract = new ethers.Contract(import.meta.env.VITE_BUY, stakeAbi, ETH.signer);
-        const deadAddress = await stakeContract.DEAD();
-        const tokenContract = new ethers.Contract(import.meta.env.VITE_ISPS, ["function balanceOf(address) view returns (uint256)"], ETH.signer);
+        const deadAddress = '0x000000000000000000000000000000000000dEaD';
+        const tokenContract = new ethers.Contract(import.meta.env.VITE_DB, ["function balanceOf(address) view returns (uint256)"], ETH.signer);
         const balance = await tokenContract.balanceOf(deadAddress);
         return ETH.formatToken(balance, 18, 4);
     }
