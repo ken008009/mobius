@@ -80,7 +80,8 @@
           color: rgb(107, 114, 128);
         }
       }
-      button {
+      button,
+      .courses-download-btns a {
         height: 40px;
         display: flex;
         align-items: center;
@@ -94,9 +95,15 @@
         font-size: 16px;
         gap: 6px;
         border-radius: 88px;
+        text-decoration: none;
         svg {
           width: 16px;
         }
+      }
+      .courses-download-btns {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
       }
     }
   }

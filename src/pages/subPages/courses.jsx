@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import { BookOpen, ExternalLink, Download } from 'lucide-react';
 import FileIcon from '@images/m/file-icon.svg?react'
+import whitepaperZh from '@assets/MS 匿名全域生态公链白皮书.pdf'
+import whitepaperEn from '@assets/MS 匿名全域生态公链白皮书英文版.pdf'
 import './styles/courses.less'
 
 const Courses = (props) => {
@@ -30,7 +32,14 @@ const Courses = (props) => {
             <i>PDF</i>
             <p>{t('Complete technical documentation of the protocol architecture and mechanics')}</p>
             <p>2026-01-15</p>
-            <button>Download<Download style={{color: '#15FAA3'}} /></button>
+            <div className="courses-download-btns">
+              <a href={whitepaperZh} download="MS 匿名全域生态公链白皮书.pdf">
+                {t('中文版')}<Download style={{color: '#15FAA3'}} />
+              </a>
+              <a href={whitepaperEn} download="MS 匿名全域生态公链白皮书英文版.pdf">
+                {t('English')}<Download style={{color: '#15FAA3'}} />
+              </a>
+            </div>
           </div>
           <div className="courses-list-item">
             <h3>{t('Protocol Mainnet Launch')}</h3>
