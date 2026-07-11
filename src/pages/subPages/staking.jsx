@@ -548,48 +548,55 @@ const Staking = (props) => {
           </div>
         </div>
        
-       {/* 序号  剩余额度  可领额度  操作 */}
+       {/* 序号  剩余额度  可领额度  操作 创建时间 */}
         <div className="staking-log">
           <div className="staking-log-title">{t('Order Records')}</div>
-          <div className="staking-table">
-            <div className="staking-table-head">
-              <div className="staking-table-row">
-                <div className="staking-table-cell col-index">{t('No.')}</div>
-                <div className="staking-table-cell col-amount">{t('Remaining Cap')}</div>
-                <div className="staking-table-cell col-daily">{t('Claimable')}</div>
-                <div className="staking-table-cell col-days">{t('Action')}</div>
+          <div className="staking-table-scroll">
+            {orders.length === 0 && !ordersLoading ? (
+              <div className="staking-table-empty">
+                <div className="no-data">{t('No order records')}</div>
               </div>
-            </div>
-            <div className="staking-table-main">
-              {orders.length === 0 && !ordersLoading && <div className="no-data">{t('No order records')}</div>}
-              {
-                orders.map((item, index) => {
-                  // 格式化字段
-                  const capNow = item.capNow ? Number(ETH.formatUnits(item.capNow, 18)) : 0
-                  const used = item.used ? Number(ETH.formatUnits(item.used, 18)) : 0
-                  const lineClaimable = item.lineClaimable ? Number(ETH.formatUnits(item.lineClaimable, 18)) : 0
-                  
-                  // 剩余额度 = capNow - used
-                  const remainingCap = Math.max(0, capNow - used)
-                  
-                  return (
-                    <div className="staking-table-row" key={index}>
-                      <div className="staking-table-cell col-index">{index + 1}</div>
-                      <div className="staking-table-cell col-amount">{remainingCap.toFixed(2)}</div>
-                      <div className="staking-table-cell col-daily">{lineClaimable.toFixed(2)}</div>
-                      <div className="staking-table-cell col-days">
-                        <button 
-                          className="claim-btn-small" 
-                          onClick={() => handleClaimLine(item.index)}
-                        >
-                          {t('Claim')}
-                        </button>
-                      </div>
-                    </div>
-                  )
-                })
-              }
-            </div>
+            ) : (
+              <table className="staking-table">
+                <thead>
+                  <tr>
+                    <th className="col-index">{t('No.')}</th>
+                    <th className="col-amount">{t('Remaining Cap')}</th>
+                    <th className="col-daily">{t('Claimable')}</th>
+                    <th className="col-days">{t('Action')}</th>
+                    <th className="col-created">{t('Created Time')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.map((item, index) => {
+                    const capNow = item.capNow ? Number(ETH.formatUnits(item.capNow, 18)) : 0
+                    const used = item.used ? Number(ETH.formatUnits(item.used, 18)) : 0
+                    const lineClaimable = item.lineClaimable ? Number(ETH.formatUnits(item.lineClaimable, 18)) : 0
+                    const remainingCap = Math.max(0, capNow - used)
+                    const createdTime = item.created
+                      ? dayjs(Number(item.created) * 1000).format('YYYY-MM-DD HH:mm:ss')
+                      : '-'
+
+                    return (
+                      <tr key={index}>
+                        <td className="col-index">{index + 1}</td>
+                        <td className="col-amount">{remainingCap.toFixed(2)}</td>
+                        <td className="col-daily">{lineClaimable.toFixed(2)}</td>
+                        <td className="col-days">
+                          <button
+                            className="claim-btn-small"
+                            onClick={() => handleClaimLine(item.index)}
+                          >
+                            {t('Claim')}
+                          </button>
+                        </td>
+                        <td className="col-created">{createdTime}</td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            )}
           </div>
           {/* 触底加载指示器 */}
           <InfiniteScroll

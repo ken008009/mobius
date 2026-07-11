@@ -263,5 +263,6 @@
   "No team data": "팀 데이터 없음",
   "Enter staking amount": "스테이킹 금액 입력",
   "Action": "작업",
-  "Claim": "수령"
+  "Claim": "수령",
+  "Created Time": "생성 시간"
 }

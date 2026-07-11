@@ -263,5 +263,6 @@
   "No team data": "ไม่มีข้อมูลทีม",
   "Enter staking amount": "ป้อนจำนวนการสเตก",
   "Action": "การดำเนินการ",
-  "Claim": "รับ"
+  "Claim": "รับ",
+  "Created Time": "เวลาสร้าง"
 }

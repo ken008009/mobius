@@ -263,5 +263,6 @@
   "No team data": "チームデータがありません",
   "Enter staking amount": "ステーキング金額を入力",
   "Action": "操作",
-  "Claim": "受け取る"
+  "Claim": "受け取る",
+  "Created Time": "作成時間"
 }

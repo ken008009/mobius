@@ -324,85 +324,75 @@
       font-size: 16px;
       margin-bottom: 10px;
     }
-    // 参考 community-table 样式
-    .staking-table {
+    // 与 community-table 一致：原生 table 保证表头/数据列宽对齐
+    .staking-table-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
       background-color: rgba(255, 255, 255, 0.08);
       border-radius: 14px;
-      overflow: hidden;
       padding: 10px;
-      .staking-table-head {
-        width: 100%;
+    }
+
+    .staking-table-empty {
+      .no-data {
+        text-align: center;
+        padding: 20px 0;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 14px;
       }
-      .staking-table-main {
-        width: 100%;
-        .no-data {
-          text-align: center;
-          padding: 20px 0;
-          color: rgba(255, 255, 255, 0.6);
-          font-size: 14px;
-        }
-      }
-      .staking-table-row {
-        width: 100%;
-        display: flex;
+    }
+
+    .staking-table {
+      width: max-content;
+      min-width: 100%;
+      border-collapse: collapse;
+      table-layout: auto;
+
+      th,
+      td {
+        padding: 0 8px;
         height: 42px;
-        .staking-table-cell {
-          height: 42px;
-          line-height: 42px;
-          text-align: center;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-          flex-shrink: 0;
-          font-size: 13px;
-          color: #fff;
-          
-          // 序号列：固定窄宽度
-          &.col-index {
-            width: 40px;
-            min-width: 40px;
-          }
-          // 额度列
-          &.col-amount {
-            flex: 1;
-            min-width: 70px;
-          }
-          // 每日释放列
-          &.col-daily {
-            flex: 1;
-            min-width: 70px;
-          }
-          // 剩余天数列
-          &.col-days {
-            flex: 1;
-            min-width: 70px;
-          }
-          // 已领取列
-          &.col-used {
-            flex: 1;
-            min-width: 70px;
-          }
+        line-height: 42px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        white-space: nowrap;
+        font-size: 13px;
+        color: #fff;
+        vertical-align: middle;
+      }
 
-          // 表格内领取按钮
-          .claim-btn-small {
-            height: 28px;
-            padding: 0 12px;
-            background: linear-gradient(to right, rgb(14, 199, 138), rgb(21, 250, 163));
-            border: none;
-            border-radius: 14px;
-            font-family: 'Proxima Nova:Bold';
-            font-size: 12px;
-            color: #000;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+      th {
+        font-weight: 600;
+      }
 
-            &:active {
-              transform: scale(0.96);
-              opacity: 0.9;
-            }
-          }
+      .col-index {
+        width: 1%;
+        padding: 0 4px;
+      }
+
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      .claim-btn-small {
+        height: 28px;
+        padding: 0 12px;
+        background: linear-gradient(to right, rgb(14, 199, 138), rgb(21, 250, 163));
+        border: none;
+        border-radius: 14px;
+        font-family: 'Proxima Nova:Bold';
+        font-size: 12px;
+        color: #000;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        &:active {
+          transform: scale(0.96);
+          opacity: 0.9;
         }
       }
     }
