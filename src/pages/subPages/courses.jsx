@@ -25,7 +25,13 @@ const Courses = (props) => {
             <h3>{t('Introduction to DeFi Protocols')}</h3>
             <p>{t('Learn the fundamentals of decentralized finance and how omnichain protocols work')}</p>
             <p>2026-03-10</p>
-            <button>View<ExternalLink style={{color: '#15FAA3'}} /></button>
+            <a
+              href="https://www.moblus.net/course.MP4"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View<ExternalLink style={{color: '#15FAA3'}} />
+            </a>
           </div>
           <div className="courses-list-item">
             <h3>{t('Möbius Strip Technical Whitepaper')}</h3>
