@@ -51,6 +51,22 @@ const Courses = (props) => {
             <h3>{t('Protocol Mainnet Launch')}</h3>
             <p>{t('The Möbius Strip Protocol is now live on mainnet')}! {t('Start staking and earning rewards today')}.</p>
             <p>2026-03-16</p>
+            <div className="courses-download-btns">
+              <a
+                href="https://www.moblus.net/MOBLUS%20STRIP%20Wealth%20Cycle%20Protocol.MP4"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t('Watch Video')}<ExternalLink style={{color: '#15FAA3'}} />
+              </a>
+              <a
+                href="https://www.moblus.net/MOBLUS%20STRIP%20Wealth%20Cycle%20Protocol.pptx"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t('View Slides')}<Download style={{color: '#15FAA3'}} />
+              </a>
+            </div>
           </div>
         </div>
       </div>
